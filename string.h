@@ -1,3 +1,5 @@
+#define NULL		((void *) 0)
+
 void *memcpy(void *dst, void *src, int n);
 void *memset(void *s, int v, int n);
 void *memchr(void *s, int c, int n);
