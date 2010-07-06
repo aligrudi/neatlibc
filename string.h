@@ -1,4 +1,4 @@
-#define NULL		((void *) 0)
+#include <stddef.h>
 
 void *memcpy(void *dst, void *src, int n);
 void *memset(void *s, int v, int n);
