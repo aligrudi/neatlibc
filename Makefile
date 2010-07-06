@@ -1,6 +1,6 @@
 CC = ncc
 FASM = fasm
-CFLAGS = -Os
+CFLAGS = -Os -I.
 
 all: start.o libc.a
 
@@ -8,7 +8,7 @@ all: start.o libc.a
 	$(FASM) $^ $@
 %.o: %.c
 	$(CC) $(CFLAGS) $^
-libc.a: syscall.o string.o
+libc.a: syscall.o string.o malloc.o
 	$(AR) rcs $@ $^
 
 clean:
