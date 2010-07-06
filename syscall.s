@@ -237,7 +237,7 @@ settimeofday:
 
 public mmap
 mmap:
-	mov	eax, 90
+	mov	eax, 192
 	jmp	__syscall
 
 public munmap
