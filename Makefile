@@ -8,7 +8,7 @@ all: start.o libc.a
 	$(FASM) $^ $@
 %.o: %.c
 	$(CC) $(CFLAGS) $^
-libc.a: syscall.o string.o malloc.o
+libc.a: syscall.o string.o malloc.o atoi.o
 	$(AR) rcs $@ $^
 
 clean:
