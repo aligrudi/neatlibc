@@ -1,11 +1,19 @@
 format ELF
 
+extrn environ
+
 extrn main
 public _start
 _start:
 	xor	ebp, ebp
 	pop	ecx
 	mov	edx, esp
+	push	ecx
+
+	lea	eax, [edx + ecx * 8]
+	mov	[environ], eax
+
+	push	eax
 	push	edx
 	push	ecx
 	call	main
