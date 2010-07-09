@@ -1,7 +1,9 @@
 format ELF
 
 public memcpy
+public memmove
 memcpy:
+memmove:
 	push	esi
 	push	edi
 	mov	edi, [esp+12]
