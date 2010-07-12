@@ -9,7 +9,7 @@ static char *putstr(char *d, char *s)
 	return d;
 }
 
-static int digits(long n, int base)
+static int digits(unsigned long n, int base)
 {
 	int i;
 	for (i = 0; n; i++)
@@ -19,10 +19,15 @@ static int digits(long n, int base)
 
 static char *digs = "0123456789abcdef";
 
-static char *putint(char *s, long n, int base)
+static char *putint(char *s, unsigned long n, int base, int sign)
 {
+	int d;
 	int i;
-	int d = digits(n, base);
+	if (sign && n & 0x80000000) {
+		*s++ = '-';
+		n = -n;
+	}
+	d = digits(n, base);
 	for (i = 0; i < d; i++) {
 		s[d - i - 1] = digs[n % base];
 		n /= base;
@@ -42,10 +47,13 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 		}
 		switch ((c = *s++)) {
 		case 'd':
-			d = putint(d, va_arg(ap, long), 10);
+			d = putint(d, va_arg(ap, long), 10, 1);
+			break;
+		case 'u':
+			d = putint(d, va_arg(ap, long), 10, 0);
 			break;
 		case 'x':
-			d = putint(d, va_arg(ap, long), 16);
+			d = putint(d, va_arg(ap, long), 16, 0);
 			break;
 		case 's':
 			d = putstr(d, va_arg(ap, char *));
