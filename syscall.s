@@ -4,7 +4,6 @@ __syscall:
 	push	ebp
 	mov	ebp, esp
 
-	push	ebp
 	push	ebx
 	push	edi
 	push	esi
@@ -24,12 +23,10 @@ __syscall:
 	mov	[errno], eax
 	mov	eax, -1
 done:
-	mov	ebp, esp
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
-	leave
 	ret
 
 errno	dd	0
