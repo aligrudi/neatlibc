@@ -5,7 +5,7 @@
 #define MMAP_MIN		(1 << 12)
 
 struct mset {
-	int left;
+	int refs;
 	int size;
 };
 
@@ -18,7 +18,7 @@ static struct mset *pool;
 
 static void mk_pool(void)
 {
-	if (pool && !pool->left) {
+	if (pool && !pool->refs) {
 		pool->size = sizeof(*pool);
 		return;
 	}
@@ -29,7 +29,7 @@ static void mk_pool(void)
 		return;
 	}
 	pool->size = sizeof(*pool);
-	pool->left = 0;
+	pool->refs = 0;
 }
 
 void *malloc(int n)
@@ -52,7 +52,7 @@ void *malloc(int n)
 	mem = (void *) pool + pool->size;
 	mem->mset = pool;
 	mem->size = n;
-	pool->left += n;
+	pool->refs++;
 	pool->size += (n + 7) & ~7;
 	return (void *) mem + sizeof(*mem);
 }
@@ -62,8 +62,8 @@ void free(void *v)
 	struct mem *mem = v - sizeof(struct mem);
 	if (mem->mset) {
 		struct mset *mset = mem->mset;
-		mset->left -= mem->size;
-		if (!mset->left && mset != pool)
+		mset->refs--;
+		if (!mset->refs && mset != pool)
 			munmap(mset, mset->size);
 	} else {
 		munmap(mem, mem->size);
