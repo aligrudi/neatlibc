@@ -55,6 +55,9 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 		case 'x':
 			d = putint(d, va_arg(ap, long), 16, 0);
 			break;
+		case 'c':
+			*d++ = va_arg(ap, int);
+			break;
 		case 's':
 			d = putstr(d, va_arg(ap, char *));
 			break;
