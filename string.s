@@ -29,6 +29,24 @@ memset:
 	mov	eax, edx
 	ret
 
+public memchr
+memchr:
+	mov	eax, [esp+8]
+	mov	ecx, [esp+12]
+	push	edi
+	mov	edi, [esp+8]
+	cld
+	repnz scasb
+	jne	.failed
+	mov	eax, edi
+	dec	eax
+	jmp	.ret
+.failed:
+	xor	eax, eax
+.ret:
+	pop	edi
+	ret
+
 public strlen
 strlen:
 	push	edi
