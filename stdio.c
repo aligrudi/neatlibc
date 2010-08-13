@@ -74,6 +74,9 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 
 static char buf[1 << 12];
 
+FILE stdout = {1};
+FILE stderr = {2};
+
 int printf(char *fmt, ...)
 {
 	va_list ap;
@@ -82,6 +85,16 @@ int printf(char *fmt, ...)
 	ret = vsprintf(buf, fmt, ap);
 	va_end(ap);
 	return write(1, buf, ret);
+}
+
+int fprintf(FILE *filp, char *fmt, ...)
+{
+	va_list ap;
+	int ret;
+	va_start(ap, fmt);
+	ret = vsprintf(buf, fmt, ap);
+	va_end(ap);
+	return write(filp->fd, buf, ret);
 }
 
 int sprintf(char *dst, char *fmt, ...)
