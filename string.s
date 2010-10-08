@@ -1,9 +1,7 @@
 format ELF
 
 public memcpy
-public memmove
 memcpy:
-memmove:
 	push	esi
 	push	edi
 	mov	edi, [esp+12]
@@ -12,6 +10,37 @@ memmove:
 	mov	eax, edi
 	cld
 	rep movsb
+	pop	edi
+	pop	esi
+	ret
+
+public memmove
+memmove:
+	push	esi
+	push	edi
+	mov	edi, [esp+12]
+	mov	esi, [esp+16]
+	mov	ecx, [esp+20]
+	cmp	edi, esi
+	jng	.usual
+	mov	eax, esi
+	add	eax, ecx
+	cmp	edi, eax
+	jg	.usual
+
+	mov	eax, edi
+	std
+	add	esi, ecx
+	add	edi, ecx
+	dec	esi
+	dec	edi
+	rep movsb
+	jmp	.ret
+.usual:
+	mov	eax, edi
+	cld
+	rep movsb
+.ret:
 	pop	edi
 	pop	esi
 	ret
