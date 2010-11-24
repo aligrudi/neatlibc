@@ -272,6 +272,11 @@ fchdir:
 	mov	eax, 133
 	jmp	__syscall
 
+public nanosleep
+nanosleep:
+	mov	eax, 162
+	jmp	__syscall
+
 public poll
 poll:
 	mov	eax, 168
