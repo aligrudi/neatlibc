@@ -53,6 +53,7 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 			d = putint(d, va_arg(ap, long), 10, 0);
 			break;
 		case 'x':
+		case 'p':
 			d = putint(d, va_arg(ap, long), 16, 0);
 			break;
 		case 'c':
