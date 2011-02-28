@@ -75,8 +75,10 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 
 static char buf[1 << 12];
 
-FILE stdout = {1};
-FILE stderr = {2};
+static FILE _stdout = {1};
+static FILE _stderr = {2};
+FILE *stdout = &_stdout;
+FILE *stderr = &_stderr;
 
 int printf(char *fmt, ...)
 {
