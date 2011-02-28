@@ -76,6 +76,24 @@ memchr:
 	pop	edi
 	ret
 
+public memcmp
+memcmp:
+	push	esi
+	push	edi
+	xor	eax, eax
+	mov	esi, [esp+12]
+	mov	edi, [esp+16]
+	mov	ecx, [esp+20]
+	jecxz	.ret
+
+	cld
+	rep cmpsb
+	jz	.ret
+.ret:
+	pop 	edi
+	pop 	esi
+	ret
+
 public strlen
 strlen:
 	push	edi
