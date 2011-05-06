@@ -2,6 +2,8 @@
 #define _ERRNO_H
 
 extern int errno;
+extern char *sys_errlist[];
+extern int sys_nerr;
 
 #define EPERM		 1	/* Operation not permitted */
 #define ENOENT		 2	/* No such file or directory */

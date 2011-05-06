@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -108,4 +109,12 @@ int sprintf(char *dst, char *fmt, ...)
 	ret = vsprintf(dst, fmt, ap);
 	va_end(ap);
 	return ret;
+}
+
+void perror(char *s)
+{
+	int idx = errno;
+	if (idx >= sys_nerr)
+		idx = 0;
+	fprintf(stderr, "%s: %s\n", s, sys_errlist[idx]);
 }

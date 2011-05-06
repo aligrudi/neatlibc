@@ -9,7 +9,7 @@ all: start.o libc.a
 %.o: %.c
 	$(CC) $(CFLAGS) $^
 libc.a: syscall.o string.o malloc.o atoi.o ctype.o stdlib.o \
-		stdarg.o stdio.o termios.o
+		stdarg.o stdio.o termios.o errno.o
 	$(AR) rcs $@ $^
 
 clean:
