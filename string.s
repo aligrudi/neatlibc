@@ -89,6 +89,8 @@ memcmp:
 	cld
 	rep cmpsb
 	jz	.ret
+	sbb	eax, eax
+	or	eax, 1
 .ret:
 	pop 	edi
 	pop 	esi
