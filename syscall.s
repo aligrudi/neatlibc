@@ -214,7 +214,7 @@ fcntl:
 
 public dup2
 dup2:
-	mov	eax, 62
+	mov	eax, 63
 	jmp	__syscall
 
 public getppid
