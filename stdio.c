@@ -46,6 +46,8 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 			*d++ = c;
 			continue;
 		}
+		if (*s == 'l')
+			s++;
 		switch ((c = *s++)) {
 		case 'd':
 			d = putint(d, va_arg(ap, long), 10, 1);
