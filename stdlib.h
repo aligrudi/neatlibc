@@ -5,3 +5,5 @@ void free(void *m);
 
 int atoi(char *s);
 long atol(char *s);
+
+char *getenv(char *name);
