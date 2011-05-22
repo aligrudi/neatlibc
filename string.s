@@ -158,7 +158,7 @@ strcpy:
 	stosb
 	or	al, al
 	jnz	.loop
-	pop	edi
 	pop	esi
+	pop	edi
 	mov	eax, edx
 	ret
