@@ -40,6 +40,8 @@
 #define TIOCSBRK	0x5427
 #define TIOCCBRK	0x5428
 #define TIOCGSID	0x5429
+#define TIOCGPTN	0x80045430
+#define TIOCSPTLCK	0x40045431
 
 /* socket-level I/O control calls. */
 #define FIOSETOWN 	0x8901
