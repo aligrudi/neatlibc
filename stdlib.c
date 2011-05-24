@@ -8,6 +8,11 @@ int exit(int status)
 	return _exit(status);
 }
 
+int abs(int n)
+{
+	return n >= 0 ? n : -n;
+}
+
 char *getenv(char *name)
 {
 	char **p = environ;
