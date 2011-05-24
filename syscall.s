@@ -137,6 +137,11 @@ getuid:
 	mov	eax, 24
 	jmp	__syscall
 
+public utime
+utime:
+	mov	eax, 30
+	jmp	__syscall
+
 public access
 access:
 	mov	eax, 33
