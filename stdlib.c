@@ -3,9 +3,9 @@
 
 char **environ;
 
-int exit(int status)
+void exit(int status)
 {
-	return _exit(status);
+	_exit(status);
 }
 
 int abs(int n)
