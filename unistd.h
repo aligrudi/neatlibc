@@ -19,6 +19,12 @@ extern char **environ;
 int close(int fd);
 int write(int fd, void *buf, int n);
 int read(int fd, void *buf, int n);
+
+#define SEEK_SET	0
+#define SEEK_CUR	1
+#define SEEK_END	2
+long lseek(int fd, long offset, int whence);
+
 void _exit(int status);
 int execve(char *path, char *argv[], char *envp[]);
 int execle(char *path, ...);
