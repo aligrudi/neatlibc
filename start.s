@@ -10,7 +10,7 @@ _start:
 	mov	edx, esp
 	push	ecx
 
-	lea	eax, [edx + ecx * 8]
+	lea	eax, [edx + ecx * 4 + 4]
 	mov	[environ], eax
 
 	push	eax
