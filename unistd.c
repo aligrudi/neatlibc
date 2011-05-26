@@ -1,6 +1,7 @@
 #include <time.h>
-#include <unistd.h>
 #include <stdarg.h>
+#include <string.h>
+#include <unistd.h>
 
 int sleep(int n)
 {
@@ -17,15 +18,38 @@ int execle(char *path, ...)
 {
 	va_list ap;
 	char *argv[EXECARGS];
-	char **env;
+	char **envp;
 	int argc = 0;
 	va_start(ap, path);
 	while (argc + 1 < EXECARGS && (argv[argc] = va_arg(ap, char *)))
 		argc++;
-	env = va_arg(ap, char **);
+	envp = va_arg(ap, char **);
 	va_end(ap);
 	argv[argc] = NULL;
-	execve(path, argv, env);
+	execve(path, argv, envp);
+	return -1;
+}
+
+int execvp(char *cmd, char *argv[])
+{
+	char path[512];
+	char *p = getenv("PATH");
+	if (strchr(cmd, '/'))
+		return execve(cmd, argv, environ);
+	if (!p)
+		p = "/bin";
+	while (*p) {
+		char *s = path;
+		while (*p && *p != ':')
+			*s++ = *p++;
+		if (s != path)
+			*s++ = '/';
+		strcpy(s, cmd);
+		execve(path, argv, environ);
+		if (*p == ':')
+			p++;
+	}
+	return -1;
 }
 
 int wait(int *status)

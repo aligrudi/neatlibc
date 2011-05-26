@@ -28,4 +28,5 @@ long lseek(int fd, long offset, int whence);
 void _exit(int status);
 int execve(char *path, char *argv[], char *envp[]);
 int execle(char *path, ...);
+int execvp(char *file, char *argv[]);
 int sleep(int n);
