@@ -110,6 +110,26 @@ strlen:
 	pop	edi
 	ret
 
+public memrchr
+memrchr:
+	mov	eax, [esp+8]
+	mov	ecx, [esp+12]
+	push	edi
+	mov	edi, [esp+8]
+	add	edi, ecx
+	dec	edi
+	std
+	repnz scasb
+	jne	.failed
+	mov	eax, edi
+	inc	eax
+	jmp	.ret
+.failed:
+	xor	eax, eax
+.ret:
+	pop	edi
+	ret
+
 public strchr
 strchr:
 	mov	ecx, [esp+4]
@@ -161,4 +181,25 @@ strcpy:
 	pop	esi
 	pop	edi
 	mov	eax, edx
+	ret
+
+public strrchr
+strrchr:
+	push	edi
+	mov	edi, [esp+8]
+	mov	ecx, [esp+12]
+	xor	edx, edx
+	dec	edi
+.loop:
+	inc	edi
+	test	al, al
+	jz	.done
+	mov	al, [edi]
+	cmp	al, cl
+	jnz	.loop
+	mov	edx, edi
+	jz	.loop
+.done:
+	mov	eax, edx
+	pop	edi
 	ret
