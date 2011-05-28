@@ -203,3 +203,31 @@ strrchr:
 	mov	eax, edx
 	pop	edi
 	ret
+
+public strncmp
+strncmp:
+	mov	ecx, [esp+4]
+	mov	edx, [esp+8]
+	xor	eax, eax
+	push	edi
+	mov	edi, [esp+16]
+.loop:
+	test	edi, edi
+	jz	.failed
+	mov	al, [ecx]
+	cmp	al, [edx]
+	jnz	.ret
+	inc	edx
+	inc	ecx
+	dec	edi
+	test	al, al
+	jnz	.loop
+.failed:
+	xor	eax, eax
+	pop	edi
+	ret
+.ret:
+	movzx	ecx, byte [edx]
+	sub	eax, ecx
+	pop	edi
+	ret

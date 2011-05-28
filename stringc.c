@@ -16,14 +16,6 @@ char *strcat(char *d, char *s)
 	return d;
 }
 
-int strncmp(char *d, char *s, int n)
-{
-	int len = strlen(d);
-	if (len >= n)
-		len = n - 1;
-	return memcmp(d, s, len + 1);
-}
-
 char *strstr(char *s, char *r)
 {
 	int len = strlen(r);
