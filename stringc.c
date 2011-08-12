@@ -6,7 +6,7 @@ char *strncpy(char *d, char *s, int n)
 	if (len > n)
 		len = n;
 	memcpy(d, s, len);
-	memcpy(d + len, 0, n - len);
+	memset(d + len, 0, n - len);
 	return d;
 }
 
