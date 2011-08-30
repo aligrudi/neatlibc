@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 int sleep(int n)
 {
@@ -55,4 +56,16 @@ int execvp(char *cmd, char *argv[])
 int wait(int *status)
 {
 	return waitpid(-1, status, 0);
+}
+
+int raise(int sig)
+{
+	return kill(getpid(), sig);
+}
+
+void abort(void)
+{
+	raise(SIGABRT);
+	while (1)
+		;
 }
