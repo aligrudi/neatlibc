@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -119,4 +120,36 @@ void perror(char *s)
 	if (idx >= sys_nerr)
 		idx = 0;
 	fprintf(stderr, "%s: %s\n", s, sys_errlist[idx]);
+}
+
+FILE *fopen(char *path, char *mode)
+{
+	FILE *fp;
+	int flags;
+
+	if (strchr(mode, '+'))
+		flags = O_RDWR;
+	else
+		flags = *mode == 'r' ? O_RDONLY : O_WRONLY;
+	if (*mode != 'r')
+		flags |= O_CREAT;
+	if (*mode == 'w')
+		flags |= O_TRUNC;
+	if (*mode == 'a')
+		flags |= O_APPEND;
+
+	fp = malloc(sizeof(*fp));
+	fp->fd = open(path, flags, 0600);
+	return fp;
+}
+
+int fclose(FILE *fp)
+{
+	int ret = close(fp);
+	free(fp);
+	return ret;
+}
+
+void setbuf(FILE *fp, char *buf)
+{
 }
