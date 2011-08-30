@@ -2,6 +2,8 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 static char *putstr(char *d, char *s)
@@ -145,7 +147,7 @@ FILE *fopen(char *path, char *mode)
 
 int fclose(FILE *fp)
 {
-	int ret = close(fp);
+	int ret = close(fp->fd);
 	free(fp);
 	return ret;
 }
