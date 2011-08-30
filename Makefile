@@ -15,7 +15,7 @@ all: start.o libc.a
 %.o: %.s
 	$(AS) $^ >/dev/null
 %.o: %.c
-	$(CC) $(CFLAGS) $^
+	$(CC) -c $(CFLAGS) $^
 
 OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
 OBJS2 = $(patsubst %.s,%.o,$(wildcard $(ARCH)/*.s))
