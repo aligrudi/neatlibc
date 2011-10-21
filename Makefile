@@ -8,6 +8,11 @@ AS = fasm
 #CC = ncc
 #AS = neatas
 
+# for x86_64 build
+#ARCH = x86_64
+#CC = ncc
+#AS = fasm
+
 CFLAGS = -Os -I.
 
 all: start.o libc.a
@@ -17,13 +22,13 @@ all: start.o libc.a
 %.o: %.c
 	$(CC) -c $(CFLAGS) $^
 
-OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
+OBJS1 = $(patsubst %.c,%.o,$(wildcard *.c))
 OBJS2 = $(patsubst %.s,%.o,$(wildcard $(ARCH)/*.s))
 
 start.o: $(ARCH)/start.o
 	cp $(ARCH)/start.o .
-libc.a: $(OBJS) $(OBJS2)
+libc.a: $(OBJS1) $(OBJS2)
 	$(AR) rcs $@ $^
 
 clean:
-	rm -f *.o *.a x86/*.o arm/*.o
+	rm -f *.o *.a x86/*.o arm/*.o x86_64/*.o
