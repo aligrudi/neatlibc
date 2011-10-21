@@ -192,13 +192,13 @@ strrchr:
 	dec	edi
 .loop:
 	inc	edi
+	mov	al, [edi]
 	test	al, al
 	jz	.done
-	mov	al, [edi]
 	cmp	al, cl
 	jnz	.loop
 	mov	edx, edi
-	jz	.loop
+	jmp	.loop
 .done:
 	mov	eax, edx
 	pop	edi
