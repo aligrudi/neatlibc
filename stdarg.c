@@ -5,6 +5,6 @@
 void *__va_arg(void **ap, int size)
 {
 	void *ret = *ap;
-	*ap += ALIGN(size, 4);
+	*ap += ALIGN(size, sizeof(long));
 	return ret;
 }
