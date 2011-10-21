@@ -5,6 +5,7 @@ void *memmove(void *dst, void *src, int n);
 void *memset(void *s, int v, int n);
 void *memchr(void *s, int c, int n);
 void *memrchr(void *s, int c, int n);
+int memcmp(char *s1, char *s2, int n);
 
 char *strcpy(char *dst, char *src);
 char *strchr(char *s, int c);
