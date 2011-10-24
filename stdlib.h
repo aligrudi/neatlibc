@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-void *malloc(int n);
+void *malloc(long n);
 void free(void *m);
 
 int atoi(char *s);

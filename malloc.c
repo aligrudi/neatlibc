@@ -32,7 +32,7 @@ static void mk_pool(void)
 	pool->refs = 0;
 }
 
-void *malloc(int n)
+void *malloc(long n)
 {
 	struct mem *mem;
 	n += sizeof(*mem);

@@ -1,6 +1,6 @@
 #include <string.h>
 
-char *strncpy(char *d, char *s, int n)
+char *strncpy(char *d, char *s, long n)
 {
 	int len = strlen(s);
 	if (len > n)
