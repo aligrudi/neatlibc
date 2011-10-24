@@ -344,12 +344,6 @@ typedef struct {
 } Elf32_Rela;
 
 typedef struct {
-	Elf32_Addr	r_offset;
-	Elf32_Word	r_info;
-	Elf32_Sword	r_addend;
-} Elf32_Rela;
-
-typedef struct {
 	Elf64_Addr	r_offset;
 	Elf64_Xword	r_info;
 	Elf64_Sxword	r_addend;
