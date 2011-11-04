@@ -17,8 +17,8 @@ int access(char *name, int type);
 extern char **environ;
 
 int close(int fd);
-int write(int fd, void *buf, int n);
-int read(int fd, void *buf, int n);
+long write(int fd, void *buf, long n);
+long read(int fd, void *buf, long n);
 
 #define SEEK_SET	0
 #define SEEK_CUR	1
