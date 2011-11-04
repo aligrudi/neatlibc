@@ -4,7 +4,9 @@ __syscall:
 	mov	r10, rcx
 	syscall
 
-	cmp	rax, -125
+	cmp	rax, 0
+	jge	done
+	cmp	rax, -4095
 	jb	done
 	neg	rax
 	mov	[errno], rax
