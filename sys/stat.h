@@ -38,6 +38,31 @@
 #define S_ISFIFO(m)	(((m) & S_IFMT) == S_IFIFO)
 #define S_ISSOCK(m)	(((m) & S_IFMT) == S_IFSOCK)
 
+#ifdef __x86_64__
+
+struct stat {
+	unsigned long	st_dev;
+	unsigned long	st_ino;
+	unsigned long	st_nlink;
+	uint32_t	st_mode;
+	uint32_t	st_uid;
+	uint32_t	st_gid;
+	uint32_t	__pad0;
+	unsigned long	 st_rdev;
+	unsigned long	st_size;
+	unsigned long	st_blksize;
+	unsigned long	st_blocks;
+	unsigned long	st_atime;
+	unsigned long	st_atime_nsec;
+	unsigned long	st_mtime;
+	unsigned long	st_mtime_nsec;
+	unsigned long	st_ctime;
+	unsigned long	st_ctime_nsec;
+	long		__unused[3];
+};
+
+#else
+
 struct stat {
 	uint32_t	st_dev;
 	unsigned long	st_ino;
@@ -58,6 +83,8 @@ struct stat {
 	unsigned long	__unused4;
 	unsigned long	__unused5;
 };
+
+#endif
 
 int stat(char *file, struct stat *buf);
 int fstat(int fd, struct stat *buf);
