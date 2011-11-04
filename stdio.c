@@ -27,7 +27,7 @@ static char *putint(char *s, unsigned long n, int base, int sign)
 {
 	int d;
 	int i;
-	if (sign && n & 0x80000000) {
+	if (sign && (signed long) n < 0) {
 		*s++ = '-';
 		n = -n;
 	}
