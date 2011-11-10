@@ -6,11 +6,6 @@
 #define SIG_UNBLOCK	1
 #define SIG_SETMASK	2
 
-#define SIG_ERR		((void (*)(int))-1)
-#define SIG_DFL		((void (*)(int)) 0)
-#define SIG_IGN		((void (*)(int)) 1)
-#define SIG_HOLD	((void (*)(int)) 2)
-
 #define SA_NOCLDSTOP  1
 #define SA_NOCLDWAIT  2
 #define SA_SIGINFO    4
@@ -37,7 +32,7 @@ int sigreturn(unsigned long n);
 struct ksa {
 	void *handler;
 	unsigned long flags;
-	void (*restorer)(void);
+	int (*restorer)(unsigned long n);
 	sigset_t mask;
 };
 

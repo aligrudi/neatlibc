@@ -39,9 +39,10 @@
 
 typedef void (*sighandler_t)(int);
 
-#define SIG_DFL		((sighandler_t) 0l)
-#define SIG_IGN		((sighandler_t) 1l)
-#define SIG_ERR		((sighandler_t) -1l)
+#define SIG_ERR		((void (*)(int)) -1)
+#define SIG_DFL		((void (*)(int)) 0)
+#define SIG_IGN		((void (*)(int)) 1)
+#define SIG_HOLD	((void (*)(int)) 2)
 
 sighandler_t signal(int signum, sighandler_t action);
 int kill(int pid, int sig);
