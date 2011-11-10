@@ -283,3 +283,13 @@ public getcwd
 getcwd:
 	mov	eax, 79
 	jmp	__syscall
+
+public sigaction
+sigaction:
+	mov	eax, 13
+	jmp	__syscall
+
+public sigreturn
+sigreturn:
+	mov	eax, 15
+	jmp	__syscall
