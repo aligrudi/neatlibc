@@ -79,7 +79,7 @@ int vsprintf(char *dst, char *fmt, va_list ap)
 	return d - dst;
 }
 
-static char buf[1 << 12];
+static char buf[1 << 14];
 
 static FILE _stdout = {1};
 static FILE _stderr = {2};
