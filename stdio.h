@@ -1,19 +1,37 @@
 #include <stdarg.h>
 
+#define EOF		(-1)
+
 typedef struct {
 	int fd;
+	int back;		/* pushback buffer */
+	char *ibuf, *obuf;	/* input/output buffer */
+	int isize, osize;	/* ibuf size */
+	int ilen, olen;		/* length of data in buf */
+	int iown, oown;		/* free the buffer when finished */
+	int icur;		/* current position in ibuf */
+	int ostat;
 } FILE;
 
+extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
 
-int printf(char *fmt, ...);
-int fprintf(FILE *filp, char *fmt, ...);
-int sprintf(char *dst, char *fmt, ...);
-int vsprintf(char *dst, char *fmt, va_list ap);
-
 FILE *fopen(char *path, char *mode);
 int fclose(FILE *fp);
+int fflush(FILE *fp);
 void setbuf(FILE *fp, char *buf);
+
+int printf(char *fmt, ...);
+int fprintf(FILE *fp, char *fmt, ...);
+int sprintf(char *dst, char *fmt, ...);
+int vsprintf(char *dst, char *fmt, va_list ap);
+int vfprintf(FILE *fp, char *fmt, va_list ap);
+
+int scanf(char *fmt, ...);
+int fscanf(FILE *fp, char *fmt, ...);
+int sscanf(char *s, char *fmt, ...);
+int vsscanf(char *s, char *fmt, va_list ap);
+int vfscanf(FILE *fp, char *fmt, va_list ap);
 
 void perror(char *s);
