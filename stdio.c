@@ -181,15 +181,20 @@ void perror(char *s)
 	fprintf(stderr, "%s: %s\n", s, sys_errlist[idx]);
 }
 
-int vsprintf(char *dst, char *fmt, va_list ap)
+int vsnprintf(char *dst, int sz, char *fmt, va_list ap)
 {
 	FILE f = {-1, EOF};
 	int ret;
 	f.obuf = dst;
-	f.osize = 1 << 20;
+	f.osize = sz - 1;
 	ret = vfprintf(&f, fmt, ap);
 	dst[f.olen] = '\0';
 	return ret;
+}
+
+int vsprintf(char *dst, char *fmt, va_list ap)
+{
+	return vsnprintf(dst, 1 << 20, fmt, ap);
 }
 
 int printf(char *fmt, ...)
@@ -218,6 +223,16 @@ int sprintf(char *dst, char *fmt, ...)
 	int ret;
 	va_start(ap, fmt);
 	ret = vsprintf(dst, fmt, ap);
+	va_end(ap);
+	return ret;
+}
+
+int snprintf(char *dst, int sz, char *fmt, ...)
+{
+	va_list ap;
+	int ret;
+	va_start(ap, fmt);
+	ret = vsnprintf(dst, sz, fmt, ap);
 	va_end(ap);
 	return ret;
 }

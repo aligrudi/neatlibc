@@ -27,6 +27,8 @@ int fprintf(FILE *fp, char *fmt, ...);
 int sprintf(char *dst, char *fmt, ...);
 int vsprintf(char *dst, char *fmt, va_list ap);
 int vfprintf(FILE *fp, char *fmt, va_list ap);
+int snprintf(char *dst, int sz, char *fmt, ...);
+int vsnprintf(char *dst, int sz, char *fmt, va_list ap);
 
 int scanf(char *fmt, ...);
 int fscanf(FILE *fp, char *fmt, ...);
