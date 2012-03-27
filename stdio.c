@@ -11,7 +11,7 @@
 static char _ibuf[BUFSZ], _obuf[BUFSZ], _ebuf[BUFSZ];
 static FILE _stdin = {0, EOF, _ibuf, NULL, BUFSZ, 0};
 static FILE _stdout = {1, EOF, NULL, _obuf, 0, BUFSZ};
-static FILE _stderr = {2, EOF, NULL, _ebuf, 0, BUFSZ};
+static FILE _stderr = {2, EOF, NULL, _ebuf, 0, 1};
 FILE *stdin = &_stdin;
 FILE *stdout = &_stdout;
 FILE *stderr = &_stderr;
@@ -72,13 +72,11 @@ int fflush(FILE *fp)
 
 static int oc(FILE *fp, int c)
 {
-	if (fp->olen == fp->osize)
-		fflush(fp);
 	if (fp->olen < fp->osize) {
 		fp->obuf[fp->olen++] = c;
 		fp->ostat++;
 	}
-	if (fp->fd == 2 || c == '\n')
+	if (c == '\n' || fp->olen == fp->osize)
 		fflush(fp);
 	return c;
 }
