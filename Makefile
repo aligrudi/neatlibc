@@ -9,7 +9,7 @@ AS = fasm
 #AS = neatas
 
 # for x86_64 build
-#ARCH = x86_64
+#ARCH = x64
 #CC = ncc
 #AS = fasm
 
