@@ -46,6 +46,8 @@ public memchr
 memchr:
 	mov	rax, rsi
 	mov	rcx, rdx
+	test	rcx, rcx
+	jz	.failed
 	cld
 	repnz scasb
 	jne	.failed
@@ -90,6 +92,8 @@ memrchr:
 	mov	rcx, rdx
 	add	rdi, rcx
 	dec	rdi
+	test	rcx, rcx
+	jz	.failed
 	std
 	repnz scasb
 	jne	.failed

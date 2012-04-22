@@ -64,6 +64,8 @@ memchr:
 	mov	ecx, [esp+12]
 	push	edi
 	mov	edi, [esp+8]
+	test	ecx, ecx
+	jz	.failed
 	cld
 	repnz scasb
 	jne	.failed
@@ -118,6 +120,8 @@ memrchr:
 	mov	edi, [esp+8]
 	add	edi, ecx
 	dec	edi
+	test	ecx, ecx
+	jz	.failed
 	std
 	repnz scasb
 	jne	.failed
