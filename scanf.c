@@ -69,13 +69,13 @@ static int iint(FILE *fp, void *dst, int l)
 
 static int istr(FILE *fp, char *dst)
 {
-	long n = 0;
+	char *d = dst;
 	int c;
 	while ((c = ic(fp)) != EOF && !isspace(c))
-		*dst++ = c;
-	*dst = '\0';
+		*d++ = c;
+	*d = '\0';
 	ungetc(c, fp);
-	return 0;
+	return d == dst;
 }
 
 int vfscanf(FILE *fp, char *fmt, va_list ap)
