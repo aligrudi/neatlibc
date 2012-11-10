@@ -18,7 +18,7 @@ static int ic(FILE *fp)
 		fp->ilen = nr;
 		fp->icur = 0;
 	}
-	return fp->icur < fp->ilen ? fp->ibuf[fp->icur++] : EOF;
+	return fp->icur < fp->ilen ? (unsigned char) fp->ibuf[fp->icur++] : EOF;
 }
 
 void setbuf(FILE *fp, char *buf)
