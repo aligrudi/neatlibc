@@ -8,6 +8,7 @@ void free(void *m);
 int atoi(char *s);
 long atol(char *s);
 int abs(int n);
+long labs(long n);
 
 void exit(int status);
 void abort(void);
