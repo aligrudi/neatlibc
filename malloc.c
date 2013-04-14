@@ -60,6 +60,8 @@ void *malloc(long n)
 void free(void *v)
 {
 	struct mem *mem = v - sizeof(struct mem);
+	if (!v)
+		return;
 	if (mem->mset) {
 		struct mset *mset = mem->mset;
 		mset->refs--;
