@@ -25,7 +25,7 @@ void setbuf(FILE *fp, char *buf)
 {
 }
 
-int getc(FILE *fp)
+int fgetc(FILE *fp)
 {
 	return ic(fp);
 }

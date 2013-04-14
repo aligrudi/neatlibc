@@ -1,6 +1,7 @@
 #include <stdarg.h>
 
 #define EOF		(-1)
+#define getc(fp)	(fgetc(fp))
 
 typedef struct {
 	int fd;
@@ -30,6 +31,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap);
 int snprintf(char *dst, int sz, char *fmt, ...);
 int vsnprintf(char *dst, int sz, char *fmt, va_list ap);
 
+int fgetc(FILE *fp);
 int scanf(char *fmt, ...);
 int fscanf(FILE *fp, char *fmt, ...);
 int sscanf(char *s, char *fmt, ...);
