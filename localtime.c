@@ -44,7 +44,7 @@ static void tp2tm(struct tm *tm, time_t t)
 	tm->tm_mday += days;
 }
 
-struct tm *localtime(long *t)
+struct tm *localtime(time_t *t)
 {
 	static struct tm tm;
 	tzset();
@@ -52,7 +52,7 @@ struct tm *localtime(long *t)
 	return &tm;
 }
 
-struct tm *gmtime(long *t)
+struct tm *gmtime(time_t *t)
 {
 	static struct tm tm;
 	tp2tm(&tm, *t);

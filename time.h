@@ -1,3 +1,8 @@
+#ifndef	_TIME_H
+#define	_TIME_H
+
+#include <sys/types.h>
+
 struct timespec {
 	long tv_sec;
 	long tv_nsec;
@@ -19,10 +24,12 @@ struct tm {
 	char *tm_zone;
 };
 
-long time(long *timep);
+time_t time(time_t *timep);
 int strftime(char *s, int len, char *fmt, struct tm *tm);
-struct tm *localtime(long *timep);
-struct tm *gmtime(long *timep);
+struct tm *localtime(time_t *timep);
+struct tm *gmtime(time_t *timep);
 
 extern long timezone;
 void tzset(void);
+
+#endif
