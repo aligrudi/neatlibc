@@ -54,6 +54,11 @@ int execvp(char *cmd, char *argv[])
 	return -1;
 }
 
+int execv(char *path, char *argv[])
+{
+	return execve(path, argv, environ);
+}
+
 int wait(int *status)
 {
 	return waitpid(-1, status, 0);
