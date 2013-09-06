@@ -154,3 +154,16 @@ int sscanf(char *s, char *fmt, ...)
 	va_end(ap);
 	return ret;
 }
+
+char *fgets(char *s, int sz, FILE *fp)
+{
+	int i = 0;
+	int c;
+	while (i + 1 < sz && (c = ic(fp)) != EOF) {
+		s[i++] = c;
+		if (c == '\n')
+			break;
+	}
+	s[i] = '\0';
+	return i ? s : NULL;
+}
