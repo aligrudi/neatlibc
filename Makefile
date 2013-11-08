@@ -1,7 +1,7 @@
 # for x86 build
-ARCH = x86
-CC = ncc
-AS = fasm
+#ARCH = x86
+#CC = ncc
+#AS = fasm
 
 # for arm build
 #ARCH = arm
@@ -9,11 +9,11 @@ AS = fasm
 #AS = neatas
 
 # for x86_64 build
-#ARCH = x64
-#CC = ncc
-#AS = fasm
+ARCH = x64
+CC = ncc
+AS = fasm
 
-CFLAGS = -Os -I.
+CFLAGS = -O2 -I.
 
 all: start.o libc.a
 
