@@ -15,6 +15,7 @@ typedef long time_t;
 typedef long useconds_t;
 
 typedef signed long off_t;
+typedef signed long ino_t;
 typedef uint32_t uid32_t;
 typedef uint32_t gid32_t;
 typedef long fpos_t;

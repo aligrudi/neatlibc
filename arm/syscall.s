@@ -262,6 +262,11 @@ fchdir:
 	mov	r12, #133
 	b	__syscall
 
+.global getdents
+getdents:
+	mov	r12, #141
+	b	__syscall
+
 .global nanosleep
 nanosleep:
 	mov	r12, #162

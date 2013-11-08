@@ -264,6 +264,11 @@ fchdir:
 	mov	eax, 81
 	jmp	__syscall
 
+public getdents
+getdents:
+	mov	eax, 78
+	jmp	__syscall
+
 public nanosleep
 nanosleep:
 	mov	eax, 35
