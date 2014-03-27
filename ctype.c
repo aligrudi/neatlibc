@@ -55,3 +55,8 @@ int isprint(int c)
 {
 	return (c & 0x7f) >= 32 && (c & 0x7f) < 127;
 }
+
+int ispunct(int c)
+{
+	return isprint(c) && !isalnum(c) && !isspace(c);
+}
