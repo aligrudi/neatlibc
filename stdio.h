@@ -38,5 +38,7 @@ int fscanf(FILE *fp, char *fmt, ...);
 int sscanf(char *s, char *fmt, ...);
 int vsscanf(char *s, char *fmt, va_list ap);
 int vfscanf(FILE *fp, char *fmt, va_list ap);
+int getchar(void);
+int ungetc(int c, FILE *fp);
 
 void perror(char *s);
