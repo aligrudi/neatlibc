@@ -25,7 +25,7 @@ struct tm {
 };
 
 time_t time(time_t *timep);
-int strftime(char *s, int len, char *fmt, struct tm *tm);
+long strftime(char *s, long len, char *fmt, struct tm *tm);
 struct tm *localtime(time_t *timep);
 struct tm *gmtime(time_t *timep);
 

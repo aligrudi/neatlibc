@@ -56,7 +56,7 @@ static char *puttz(char *s)
 	return s;
 }
 
-int strftime(char *s, int n, char *f, struct tm *tm)
+long strftime(char *s, long n, char *f, struct tm *tm)
 {
 	int val;
 	char *beg = s;
