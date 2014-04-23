@@ -10,7 +10,7 @@ int memcmp(char *s1, char *s2, long n);
 char *strcpy(char *dst, char *src);
 char *strchr(char *s, int c);
 char *strrchr(char *s, int c);
-int strlen(char *s);
+long strlen(char *s);
 int strcmp(char *s1, char *s2);
 
 char *strncpy(char *d, char *s, long n);
