@@ -53,7 +53,7 @@ int toupper(int c)
 
 int isprint(int c)
 {
-	return (c & 0x7f) >= 32 && (c & 0x7f) < 127;
+	return (c & 0x7f) >= 32 && c < 127;
 }
 
 int ispunct(int c)
