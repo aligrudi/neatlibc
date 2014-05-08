@@ -10,6 +10,7 @@ int isalnum(int c);
 int isupper(int c);
 int islower(int c);
 int isprint(int c);
+int ispunct(int c);
 
 int tolower(int c);
 int toupper(int c);
