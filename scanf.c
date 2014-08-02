@@ -42,7 +42,8 @@ int ungetc(int c, FILE *fp)
 	return fp->back;
 }
 
-static int iint(FILE *fp, void *dst, int l)
+/* t is 1 for char, 2 for short, 4 for int, and 8 for long */
+static int iint(FILE *fp, void *dst, int t)
 {
 	long n = 0;
 	int c;
@@ -60,10 +61,14 @@ static int iint(FILE *fp, void *dst, int l)
 		n = n * 10 + c - '0';
 	} while (isdigit(c = ic(fp)));
 	ungetc(c, fp);
-	if (l)
+	if (t == 8)
 		*(long *) dst = neg ? -n : n;
-	else
+	else if (t == 4)
 		*(int *) dst = neg ? -n : n;
+	else if (t == 2)
+		*(short *) dst = neg ? -n : n;
+	else
+		*(char *) dst = neg ? -n : n;
 	return 0;
 }
 
@@ -81,8 +86,7 @@ static int istr(FILE *fp, char *dst)
 int vfscanf(FILE *fp, char *fmt, va_list ap)
 {
 	int ret = 0;
-	int l = 0;
-	int c;
+	int t, c;
 	char *s;
 	while (*fmt) {
 		while (isspace(*fmt))
@@ -96,14 +100,19 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 		if (*fmt != '%')
 			continue;
 		fmt++;
-		if (*fmt == 'l') {
-			l = 1;
+		t = 4;
+		while (*fmt == 'l') {
+			t = 8;
+			fmt++;
+		}
+		while (*fmt == 'h') {
+			t = t < 4 ? 1 : 2;
 			fmt++;
 		}
 		switch (*fmt++) {
 		case 'u':
 		case 'd':
-			if (iint(fp, va_arg(ap, long *), l))
+			if (iint(fp, va_arg(ap, long *), t))
 				return ret;
 			ret++;
 			break;

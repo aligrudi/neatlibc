@@ -136,7 +136,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			oc(fp, c);
 			continue;
 		}
-		if (*s == 'l')
+		if (*s == 'l' || *s == 'h')
 			s++;
 		if (*s == '0') {
 			fill = '0';
