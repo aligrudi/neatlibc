@@ -49,10 +49,10 @@ static int iint(FILE *fp, void *dst, int t)
 	int c;
 	int neg = 0;
 	c = ic(fp);
-	if (c == '-') {
+	if (c == '-')
 		neg = 1;
+	if (c == '-' || c == '+')
 		c = ic(fp);
-	}
 	if (!isdigit(c)) {
 		ungetc(c, fp);
 		return 1;
