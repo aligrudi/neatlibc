@@ -138,12 +138,6 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			oc(fp, c);
 			continue;
 		}
-		if (*s == '+') {
-			psign = 1;
-			s++;
-		}
-		if (*s == 'l' || *s == 'h')
-			s++;
 		if (*s == '0') {
 			fill = '0';
 			s++;
@@ -152,6 +146,12 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			wid *= 10;
 			wid += *s++ - '0';
 		}
+		if (*s == '+') {
+			psign = 1;
+			s++;
+		}
+		if (*s == 'l' || *s == 'h')
+			s++;
 		switch ((c = *s++)) {
 		case 'd':
 			oint(fp, va_arg(ap, long), 10, 1, wid, fill, psign);
