@@ -100,13 +100,13 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 		if (*fmt != '%')
 			continue;
 		fmt++;
-		t = 4;
+		t = sizeof(int);
 		while (*fmt == 'l') {
-			t = 8;
+			t = sizeof(long);
 			fmt++;
 		}
 		while (*fmt == 'h') {
-			t = t < 4 ? 1 : 2;
+			t = t < sizeof(int) ? sizeof(char) : sizeof(short);
 			fmt++;
 		}
 		switch (*fmt++) {
