@@ -157,13 +157,13 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			psign = 1;
 			s++;
 		}
-		while (*fmt == 'l') {
+		while (*s == 'l') {
 			bytes = sizeof(long);
-			fmt++;
+			s++;
 		}
-		while (*fmt == 'h') {
+		while (*s == 'h') {
 			bytes = bytes < sizeof(int) ? sizeof(char) : sizeof(short);
-			fmt++;
+			s++;
 		}
 		switch ((c = *s++)) {
 		case 'd':
