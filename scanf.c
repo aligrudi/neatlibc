@@ -87,7 +87,6 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 {
 	int ret = 0;
 	int t, c;
-	char *s;
 	while (*fmt) {
 		while (isspace(*fmt))
 			fmt++;
