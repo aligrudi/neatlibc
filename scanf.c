@@ -43,7 +43,7 @@ int ungetc(int c, FILE *fp)
 }
 
 /* t is 1 for char, 2 for short, 4 for int, and 8 for long */
-static int iint(FILE *fp, void *dst, int t)
+static int iint(FILE *fp, void *dst, int t, int wid)
 {
 	long n = 0;
 	int c;
@@ -51,15 +51,15 @@ static int iint(FILE *fp, void *dst, int t)
 	c = ic(fp);
 	if (c == '-')
 		neg = 1;
-	if (c == '-' || c == '+')
+	if ((c == '-' || c == '+') && wid-- > 0)
 		c = ic(fp);
-	if (!isdigit(c)) {
+	if (!isdigit(c) || wid <= 0) {
 		ungetc(c, fp);
 		return 1;
 	}
 	do {
 		n = n * 10 + c - '0';
-	} while (isdigit(c = ic(fp)));
+	} while (isdigit(c = ic(fp)) && --wid > 0);
 	ungetc(c, fp);
 	if (t == 8)
 		*(long *) dst = neg ? -n : n;
@@ -72,11 +72,11 @@ static int iint(FILE *fp, void *dst, int t)
 	return 0;
 }
 
-static int istr(FILE *fp, char *dst)
+static int istr(FILE *fp, char *dst, int wid)
 {
 	char *d = dst;
 	int c;
-	while ((c = ic(fp)) != EOF && !isspace(c))
+	while ((c = ic(fp)) != EOF && wid-- > 0 && !isspace(c))
 		*d++ = c;
 	*d = '\0';
 	ungetc(c, fp);
@@ -87,18 +87,24 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 {
 	int ret = 0;
 	int t, c;
+	int wid = 1 << 20;
 	while (*fmt) {
-		while (isspace(*fmt))
+		while (isspace((unsigned char) *fmt))
 			fmt++;
 		while (isspace(c = ic(fp)))
 			;
 		ungetc(c, fp);
-		while (*fmt && *fmt != '%' && !isspace(*fmt))
+		while (*fmt && *fmt != '%' && !isspace((unsigned char) *fmt))
 			if (*fmt++ != ic(fp))
 				return ret;
 		if (*fmt != '%')
 			continue;
 		fmt++;
+		if (isdigit((unsigned char) *fmt)) {
+			wid = 0;
+			while (isdigit((unsigned char) *fmt))
+				wid = wid * 10 + *fmt++ - '0';
+		}
 		t = sizeof(int);
 		while (*fmt == 'l') {
 			t = sizeof(long);
@@ -111,12 +117,12 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 		switch (*fmt++) {
 		case 'u':
 		case 'd':
-			if (iint(fp, va_arg(ap, long *), t))
+			if (iint(fp, va_arg(ap, long *), t, wid))
 				return ret;
 			ret++;
 			break;
 		case 's':
-			if (istr(fp, va_arg(ap, char *)))
+			if (istr(fp, va_arg(ap, char *), wid))
 				return ret;
 			ret++;
 			break;
