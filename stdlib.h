@@ -21,3 +21,11 @@ int system(char *cmd);
 
 void srand(unsigned int seed);
 int rand(void);
+
+/* for examining heap memory allocation */
+#ifdef MEMTST
+void *memtst_malloc(long n);
+void memtst_free(void *v);
+#define malloc	memtst_malloc
+#define free	memtst_free
+#endif
