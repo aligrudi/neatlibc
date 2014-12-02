@@ -12,6 +12,8 @@ long labs(long n);
 
 void exit(int status);
 void abort(void);
+int atexit(void (*func)(void));
+
 char *getenv(char *name);
 void qsort(void *a, int n, int sz, int (*cmp)(void *, void *));
 int mkstemp(char *t);

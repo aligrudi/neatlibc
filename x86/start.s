@@ -3,6 +3,7 @@ format ELF
 extrn environ
 
 extrn main
+extrn __neatlibc_exit
 public _start
 _start:
 	xor	ebp, ebp
@@ -18,5 +19,6 @@ _start:
 	push	ecx
 	call	main
 	mov	ebx, eax
+	call	__neatlibc_exit
 	mov	eax, 0x1
 	int	0x80
