@@ -1,0 +1,13 @@
+NEATLIBC
+========
+
+Neatlibc is a small C standard library, supporting x86, x86_64, and
+32-bit ARM architectures.  Written mainly for bootstrapping neatcc,
+neatlibc does not implement many of the C standard library functions.
+Nonetheless, most of the programs available in its homepage
+(http://litcave.rudi.ir/) can be compiled with neatcc and neatlibc.
+
+To examine dynamic memory allocation in a program, you can define
+MEMTST macro before including stdlib.h header (only implemented for
+x86_64).  It should report failed allocations, bad free() calls, and
+memory leaks.
