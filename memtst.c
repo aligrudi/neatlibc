@@ -5,12 +5,12 @@
 #define MTHASH(v)		((((long) v) >> 8) & 0xffff)
 #define MEMTSTSZ		(1 << 18)
 #define MTHASHSZ		(1 << 16)
-#define MTBTLEN			64
+#define MTBTLEN			5
 
 struct memtst {
 	long *mem;
 	long n;
-	char bt[MTBTLEN];
+	long bt[MTBTLEN];
 	int freed;
 };
 
@@ -26,6 +26,14 @@ static int memtst_full(void)
 	return memtst_n == memtst_sz;
 }
 
+static char *memtst_show(long *bt)
+{
+	static char s[100];
+	snprintf(s, sizeof(s), "%8p %8p %8p %8p %8p",
+		bt[0], bt[1], bt[2], bt[3], bt[4]);
+	return s;
+}
+
 static void memtst_summary(void)
 {
 	int i;
@@ -38,7 +46,7 @@ static void memtst_summary(void)
 		struct memtst *mt = &memtst[i];
 		if (!mt->freed)
 			fprintf(stderr, "memtstleak %8p %8ld %s\n",
-				mt->mem, mt->n, mt->bt);
+				mt->mem, mt->n, memtst_show(mt->bt));
 	}
 }
 
@@ -51,7 +59,7 @@ static void memtst_init(void)
 	atexit(memtst_summary);
 }
 
-static void memtst_put(void *mem, int n, char *bt)
+static void memtst_put(void *mem, int n, long *bt)
 {
 	struct memtst *mt;
 	if (!memtst)
@@ -61,7 +69,7 @@ static void memtst_put(void *mem, int n, char *bt)
 	mt = &memtst[memtst_n];
 	mt->mem = mem;
 	mt->n = n;
-	strcpy(mt->bt, bt);
+	memcpy(mt->bt, bt, sizeof(mt->bt));
 	memtst_prev[memtst_n] = memtst_tail[MTHASH(mem)];
 	memtst_tail[MTHASH(mem)] = memtst_n;
 	memtst_n++;
@@ -84,21 +92,23 @@ static struct memtst *memtst_get(void *mem)
 
 long memtst_back(int n);
 
-static void memtst_bt(char *s)
+static void memtst_bt(long *bt)
 {
-	snprintf(s, MTBTLEN, "%8p %8p %8p %8p %8p %8p",
-		memtst_back(0), memtst_back(1), memtst_back(2),
-		memtst_back(3), memtst_back(4), memtst_back(5));
+	bt[0] = memtst_back(1);
+	bt[1] = memtst_back(2);
+	bt[2] = memtst_back(3);
+	bt[3] = memtst_back(4);
+	bt[4] = memtst_back(5);
 }
 
 void *memtst_malloc(long n)
 {
 	void *v = malloc(n);
-	char bt[MTBTLEN];
+	long bt[MTBTLEN];
 	memtst_allocs++;
 	memtst_bt(bt);
 	if (!v)
-		fprintf(stderr, "memtstfail %8ld %s\n", n, bt);
+		fprintf(stderr, "memtstfail %8ld %s\n", n, memtst_show(bt));
 	else
 		memtst_put(v, n, bt);
 	return v;
@@ -112,9 +122,9 @@ void memtst_free(void *v)
 	memtst_frees++;
 	mt = memtst_get(v);
 	if (!mt && !memtst_full()) {
-		char bt[MTBTLEN];
+		long bt[MTBTLEN];
 		memtst_bt(bt);
-		fprintf(stderr, "memtstfree %8p %s\n", v, bt);
+		fprintf(stderr, "memtstfree %8p %s\n", v, memtst_show(bt));
 		return;
 	}
 	if (mt)
