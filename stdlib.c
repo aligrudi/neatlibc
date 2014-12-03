@@ -7,11 +7,6 @@
 
 char **environ;
 
-void exit(int status)
-{
-	_exit(status);
-}
-
 int abs(int n)
 {
 	return n >= 0 ? n : -n;
@@ -65,4 +60,10 @@ void __neatlibc_exit(void)
 	int i;
 	for (i = 0; i < atexit_cnt; i++)
 		atexit_func[i]();
+}
+
+void exit(int status)
+{
+	__neatlibc_exit();
+	_exit(status);
 }
