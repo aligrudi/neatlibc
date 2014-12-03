@@ -13,6 +13,7 @@
 #define X_OK		1
 #define F_OK		0
 int access(char *name, int type);
+int unlink(char *path);
 
 extern char **environ;
 
@@ -26,6 +27,9 @@ long read(int fd, void *buf, long n);
 long lseek(int fd, long offset, int whence);
 
 void _exit(int status);
+int fork(void);
+int getpid(void);
+int getppid(void);
 int execve(char *path, char *argv[], char *envp[]);
 int execle(char *path, ...);
 int execvp(char *file, char *argv[]);

@@ -1,7 +1,8 @@
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
 static int ic(FILE *fp)
 {

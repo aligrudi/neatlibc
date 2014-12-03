@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 static int tmpid;
 static char *digs = "0123456789abcdef";
