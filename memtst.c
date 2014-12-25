@@ -19,7 +19,10 @@ static int memtst_n;		/* number of items in memtst[] */
 static int memtst_sz = MEMTSTSZ;
 static int *memtst_tail;	/* hash table list tails */
 static int *memtst_prev;	/* hash table list previous items */
-static int memtst_allocs, memtst_frees;
+static int memtst_mcnt, memtst_fcnt;	/* malloc() and free() count */
+static long memtst_mmax;	/* maximum memory used */
+static long memtst_mcur;	/* allocated memory */
+static long memtst_mtot;	/* total memory allocated */
 
 static int memtst_full(void)
 {
@@ -37,11 +40,12 @@ static char *memtst_show(long *bt)
 static void memtst_summary(void)
 {
 	int i;
-	fprintf(stderr, "memtst %d %d\n", memtst_allocs, memtst_frees);
+	fprintf(stderr, "memtst %d %d  %ld", memtst_mcnt, memtst_fcnt, memtst_mtot);
 	if (memtst_full()) {
-		fprintf(stderr, "memtst: increase MEMTSTSZ\n");
+		fprintf(stderr, "\nmemtst: increase MEMTSTSZ\n");
 		return;
 	}
+	fprintf(stderr, " %ld\n", memtst_mmax);
 	for (i = 0; i < memtst_n; i++) {
 		struct memtst *mt = &memtst[i];
 		if (!mt->freed)
@@ -105,12 +109,18 @@ void *memtst_malloc(long n)
 {
 	void *v = malloc(n);
 	long bt[MTBTLEN];
-	memtst_allocs++;
 	memtst_bt(bt);
 	if (!v)
 		fprintf(stderr, "memtstfail %8ld %s\n", n, memtst_show(bt));
 	else
 		memtst_put(v, n, bt);
+	if (v) {
+		memtst_mcnt++;
+		memtst_mcur += n;
+		memtst_mtot += n;
+	}
+	if (memtst_mcur > memtst_mmax)
+		memtst_mmax = memtst_mcur;
 	return v;
 }
 
@@ -119,7 +129,7 @@ void memtst_free(void *v)
 	struct memtst *mt;
 	if (!v)
 		return;
-	memtst_frees++;
+	memtst_fcnt++;
 	mt = memtst_get(v);
 	if (!mt && !memtst_full()) {
 		long bt[MTBTLEN];
@@ -127,6 +137,8 @@ void memtst_free(void *v)
 		fprintf(stderr, "memtstfree %8p %s\n", v, memtst_show(bt));
 		return;
 	}
+	if (mt)
+		memtst_mcur -= mt->n;
 	if (mt)
 		mt->freed = 1;
 	free(v);
