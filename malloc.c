@@ -1,73 +1,68 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-#define MSET_SIZE		(1 << 15)
-#define MMAP_MIN		(1 << 12)
+#define PGSIZE		4096
+#define PGMASK		(PGSIZE - 1)
+#define MSETMAX		4096
+#define MSETLEN		(1 << 15)
 
 struct mset {
 	int refs;
 	int size;
 };
 
-struct mem {
-	int size;
-	struct mset *mset;
-};
-
 static struct mset *pool;
 
-static void mk_pool(void)
+static int mk_pool(void)
 {
 	if (pool && !pool->refs) {
 		pool->size = sizeof(*pool);
-		return;
+		return 0;
 	}
-	pool = mmap(NULL, MSET_SIZE, PROT_READ | PROT_WRITE,
+	pool = mmap(NULL, MSETLEN, PROT_READ | PROT_WRITE,
 				MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	if (pool == MAP_FAILED) {
 		pool = NULL;
-		return;
+		return 1;
 	}
 	pool->size = sizeof(*pool);
 	pool->refs = 0;
+	return 0;
 }
 
 void *malloc(long n)
 {
-	struct mem *mem;
-	n += sizeof(*mem);
-	if (n >= MMAP_MIN) {
-		mem = mmap(NULL, n, PROT_READ | PROT_WRITE,
+	void *m;
+	if (n >= MSETMAX) {
+		m = mmap(NULL, n + PGSIZE, PROT_READ | PROT_WRITE,
 				MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-		if (mem == MAP_FAILED)
+		if (m == MAP_FAILED)
 			return NULL;
-		mem->size = n;
-		mem->mset = NULL;
-		return (void *) mem + sizeof(*mem);
+		*(long *) m = n + PGSIZE;	/* store length in the first page */
+		return m + PGSIZE;
 	}
-	if (!pool || MSET_SIZE - pool->size < n)
-		mk_pool();
-	if (!pool)
-		return NULL;
-	mem = (void *) pool + pool->size;
-	mem->mset = pool;
-	mem->size = n;
+	if (!pool || MSETLEN - pool->size < n + sizeof(void *))
+		if (mk_pool())
+			return NULL;
+	m = (void *) pool + pool->size;
+	*(void **) m = pool;			/* the address of the owning mset */
 	pool->refs++;
-	pool->size += (n + 7) & ~7;
-	return (void *) mem + sizeof(*mem);
+	pool->size += (n + sizeof(void *) + 7) & ~7;
+	if (!((pool + pool->size + sizeof(void *)) & PGMASK))
+		pool->size += sizeof(long);
+	return m + sizeof(void *);
 }
 
 void free(void *v)
 {
-	struct mem *mem = v - sizeof(struct mem);
 	if (!v)
 		return;
-	if (mem->mset) {
-		struct mset *mset = mem->mset;
+	if (v & PGMASK) {
+		struct mset *mset = *(void **) (v - sizeof(void *));
 		mset->refs--;
 		if (!mset->refs && mset != pool)
 			munmap(mset, mset->size);
 	} else {
-		munmap(mem, mem->size);
+		munmap(v - PGSIZE, *(long *) (v - PGSIZE));
 	}
 }
