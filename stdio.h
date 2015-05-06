@@ -30,6 +30,7 @@ int vsprintf(char *dst, char *fmt, va_list ap);
 int vfprintf(FILE *fp, char *fmt, va_list ap);
 int snprintf(char *dst, int sz, char *fmt, ...);
 int vsnprintf(char *dst, int sz, char *fmt, va_list ap);
+int fputs(char *s, FILE *fp);
 
 int fgetc(FILE *fp);
 char *fgets(char *s, int sz, FILE *fp);

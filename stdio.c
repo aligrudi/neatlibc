@@ -88,7 +88,7 @@ static void ostr(FILE *fp, char *s, int wid)
 	while (fill-- > 0)
 		oc(fp, ' ');
 	while (*s)
-		oc(fp, *s++);
+		oc(fp, (unsigned char) *s++);
 }
 
 static int digits(unsigned long n, int base)
@@ -137,7 +137,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 	char *s = fmt;
 	int beg = fp->ostat;
 	while (*s) {
-		int c = *s++;
+		int c = (unsigned char) *s++;
 		int fill = ' ';
 		int wid = 0;
 		int psign = 0;		/* add sign as in %+d */
@@ -255,4 +255,11 @@ int snprintf(char *dst, int sz, char *fmt, ...)
 	ret = vsnprintf(dst, sz, fmt, ap);
 	va_end(ap);
 	return ret;
+}
+
+int fputs(char *s, FILE *fp)
+{
+	while (*s)
+		oc(fp, (unsigned char) *s++);
+	return 0;
 }
