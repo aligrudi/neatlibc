@@ -298,3 +298,23 @@ public sigreturn
 sigreturn:
 	mov	eax, 15
 	jmp	__syscall
+
+public fsync
+fsync:
+	mov	eax, 74
+	jmp	__syscall
+
+public fdatasync
+fdatasync:
+	mov	eax, 75
+	jmp	__syscall
+
+public truncate
+truncate:
+	mov	eax, 76
+	jmp	__syscall
+
+public ftruncate
+ftruncate:
+	mov	eax, 77
+	jmp	__syscall
