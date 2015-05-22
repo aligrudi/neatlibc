@@ -16,6 +16,8 @@
 #define RA_END		'$'	/* string end */
 #define RA_ANY		'.'	/* any character */
 #define RA_BRK		'['	/* bracket expression */
+#define RA_WBEG		'<'	/* word start */
+#define RA_WEND		'>'	/* word end */
 
 /* regular expression node types */
 #define RN_ATOM		'\0'	/* regular expression */
@@ -171,6 +173,11 @@ static void ratom_read(struct ratom *ra, char **pat)
 		ratom_readbrk(ra, pat);
 		break;
 	case '\\':
+		if ((*pat)[1] == '<' || (*pat)[1] == '>') {
+			ra->ra = (*pat)[1] == '<' ? RA_WBEG : RA_WEND;
+			*pat += 2;
+			break;
+		}
 		(*pat)++;
 	default:
 		ra->ra = RA_CHR;
@@ -203,6 +210,7 @@ static char *charclasses[][2] = {
 
 static int ratom_match(struct ratom *ra, struct rstate *rs)
 {
+	typedef unsigned char uc_t;
 	int i;
 	if (ra->ra == RA_CHR) {
 		int c1 = uc_dec(ra->s);
@@ -217,19 +225,10 @@ static int ratom_match(struct ratom *ra, struct rstate *rs)
 		return 0;
 	}
 	if (ra->ra == RA_BRK) {
-		typedef unsigned char uc_t;
 		int not = ra->s[0] == '^';
 		char *p = not ? ra->s + 1 : ra->s;
 		int c, clen;
 		int beg, end;
-		if (!strcmp(":<:", ra->s)) {
-			return !((rs->s == rs->o || !isword((uc_t) rs->s[-1])) &&
-				isword((uc_t) rs->s[0]));
-		}
-		if (!strcmp(":>:", ra->s)) {
-			return !(rs->s != rs->o && isword((uc_t) rs->s[-1]) &&
-				(!rs->s[0] || !isword((uc_t) rs->s[0])));
-		}
 		if (!rs->s[0])
 			return 1;
 		if (p[0] == ':')
@@ -268,6 +267,12 @@ static int ratom_match(struct ratom *ra, struct rstate *rs)
 		return rs->s != rs->o;
 	if (ra->ra == RA_END && !(rs->flg & REG_NOTEOL))
 		return rs->s[0] != '\0';
+	if (ra->ra == RA_WBEG)
+		return !((rs->s == rs->o || !isword((uc_t) rs->s[-1])) &&
+			isword((uc_t) rs->s[0]));
+	if (ra->ra == RA_WEND)
+		return !(rs->s != rs->o && isword((uc_t) rs->s[-1]) &&
+			(!rs->s[0] || !isword((uc_t) rs->s[0])));
 	return 1;
 }
 
