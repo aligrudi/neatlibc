@@ -4,8 +4,8 @@
 #include <string.h>
 #include "regex.h"
 
-#define NGRPS		32
-#define NREPS		64
+#define NGRPS		64
+#define NREPS		128
 
 #define MAX(a, b)	((a) < (b) ? (b) : (a))
 #define LEN(a)		(sizeof(a) / sizeof((a)[0]))
@@ -189,9 +189,17 @@ static void ratom_read(struct ratom *ra, char **pat)
 	}
 }
 
-static int isword(int c)
+static char *uc_beg(char *beg, char *s)
 {
-	return isalpha(c) || isdigit(c) || c == '_';
+	while (s > beg && (((unsigned char) *s) & 0xc0) == 0x80)
+		s--;
+	return s;
+}
+
+static int isword(char *s)
+{
+	int c = (unsigned char) s[0];
+	return isalnum(c) || c == '_' || c > 127;
 }
 
 static char *charclasses[][2] = {
@@ -210,7 +218,6 @@ static char *charclasses[][2] = {
 
 static int ratom_match(struct ratom *ra, struct rstate *rs)
 {
-	typedef unsigned char uc_t;
 	int i;
 	if (ra->ra == RA_CHR) {
 		int c1 = uc_dec(ra->s);
@@ -268,11 +275,11 @@ static int ratom_match(struct ratom *ra, struct rstate *rs)
 	if (ra->ra == RA_END && !(rs->flg & REG_NOTEOL))
 		return rs->s[0] != '\0';
 	if (ra->ra == RA_WBEG)
-		return !((rs->s == rs->o || !isword((uc_t) rs->s[-1])) &&
-			isword((uc_t) rs->s[0]));
+		return !((rs->s == rs->o || !isword(uc_beg(rs->o, rs->s - 1))) &&
+			isword(rs->s));
 	if (ra->ra == RA_WEND)
-		return !(rs->s != rs->o && isword((uc_t) rs->s[-1]) &&
-			(!rs->s[0] || !isword((uc_t) rs->s[0])));
+		return !(rs->s != rs->o && isword(uc_beg(rs->o, rs->s - 1)) &&
+			(!rs->s[0] || !isword(rs->s)));
 	return 1;
 }
 
