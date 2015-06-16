@@ -134,23 +134,31 @@ static void ratom_copy(struct ratom *dst, struct ratom *src)
 	}
 }
 
+static int brk_len(char *s)
+{
+	int n = 1;
+	if (s[n] == '^')	/* exclusion mark */
+		n++;
+	if (s[n] == ']')	/* handling []a] */
+		n++;
+	while (s[n] && s[n] != ']') {
+		if (s[n] == '[' && (s[n + 1] == ':' || s[n + 1] == '='))
+			while (s[n] && s[n] != ']')
+				n++;
+		if (s[n])
+			n++;
+	}
+	return s[n] == ']' ? n + 1 : n;
+}
+
 static void ratom_readbrk(struct ratom *ra, char **pat)
 {
-	char *beg = ++*pat;
-	int len;
+	int len = brk_len(*pat);
 	ra->ra = RA_BRK;
-	if (**pat == '^')	/* exclusion mark */
-		(*pat)++;
-	if (**pat)		/* handling []a] */
-		(*pat)++;
-	while (**pat && *(*pat)++ != ']')
-		;
-	len = *pat - beg - 1;
-	if (len >= 0) {
-		ra->s = malloc(len + 1);
-		memcpy(ra->s, beg, len);
-		ra->s[len] = '\0';
-	}
+	ra->s = malloc(len + 1);
+	memcpy(ra->s, *pat, len);
+	ra->s[len] = '\0';
+	*pat += len;
 }
 
 static void ratom_read(struct ratom *ra, char **pat)
@@ -202,7 +210,7 @@ static int isword(char *s)
 	return isalnum(c) || c == '_' || c > 127;
 }
 
-static char *charclasses[][2] = {
+static char *brk_classes[][2] = {
 	{":alnum:", "a-zA-Z0-9"},
 	{":alpha:", "a-zA-Z"},
 	{":blank:", " \t"},
@@ -216,9 +224,47 @@ static char *charclasses[][2] = {
 	{":xdigit:", "a-fA-F0-9"},
 };
 
+static int brk_match(char *brk, int c, int flg)
+{
+	int beg, end;
+	int i;
+	int not = brk[0] == '^';
+	char *p = not ? brk + 1 : brk;
+	char *p0 = p;
+	if (flg & REG_ICASE && c < 128 && isupper(c))
+		c = tolower(c);
+	while (*p && (p == p0 || *p != ']')) {
+		if (p[0] == '[' && p[1] == ':') {
+			for (i = 0; i < LEN(brk_classes); i++) {
+				char *cc = brk_classes[i][0];
+				char *cp = brk_classes[i][1];
+				if (!strncmp(cc, p + 1, strlen(cc)))
+					if (!brk_match(cp, c, flg))
+						return not;
+			}
+			p += brk_len(p);
+			continue;
+		}
+		beg = uc_dec(p);
+		p += uc_len(p);
+		end = beg;
+		if (p[0] == '-' && p[1] && p[1] != ']') {
+			p++;
+			end = uc_dec(p);
+			p += uc_len(p);
+		}
+		if (flg & REG_ICASE && beg < 128 && isupper(beg))
+			beg = tolower(beg);
+		if (flg & REG_ICASE && end < 128 && isupper(end))
+			end = tolower(end);
+		if (c >= beg && c <= end)
+			return not;
+	}
+	return !not;
+}
+
 static int ratom_match(struct ratom *ra, struct rstate *rs)
 {
-	int i;
 	if (ra->ra == RA_CHR) {
 		int c1 = uc_dec(ra->s);
 		int c2 = uc_dec(rs->s);
@@ -231,44 +277,18 @@ static int ratom_match(struct ratom *ra, struct rstate *rs)
 		rs->s += uc_len(ra->s);
 		return 0;
 	}
-	if (ra->ra == RA_BRK) {
-		int not = ra->s[0] == '^';
-		char *p = not ? ra->s + 1 : ra->s;
-		int c, clen;
-		int beg, end;
-		if (!rs->s[0])
-			return 1;
-		if (p[0] == ':')
-			for (i = 0; i < LEN(charclasses); i++)
-				if (!strcmp(charclasses[i][0], p))
-					p = charclasses[i][1];
-		c = uc_dec(rs->s);
-		rs->s += uc_len(rs->s);
-		if (rs->flg & REG_ICASE && c < 128 && isupper(c))
-			c = tolower(c);
-		while (*p) {
-			beg = uc_dec(p);
-			p += uc_len(p);
-			end = beg;
-			if (p[0] == '-' && p[1]) {
-				p++;
-				end = uc_dec(p);
-				p += uc_len(p);
-			}
-			if (rs->flg & REG_ICASE && beg < 128 && isupper(beg))
-				beg = tolower(beg);
-			if (rs->flg & REG_ICASE && end < 128 && isupper(end))
-				end = tolower(end);
-			if (c >= beg && c <= end)
-				return not;
-		}
-		return !not;
-	}
 	if (ra->ra == RA_ANY) {
 		if (!rs->s[0])
 			return 1;
 		rs->s += uc_len(rs->s);
 		return 0;
+	}
+	if (ra->ra == RA_BRK) {
+		int c = uc_dec(rs->s);
+		if (!c)
+			return 1;
+		rs->s += uc_len(rs->s);
+		return brk_match(ra->s + 1, c, rs->flg);
 	}
 	if (ra->ra == RA_BEG && !(rs->flg & REG_NOTBOL))
 		return rs->s != rs->o;
