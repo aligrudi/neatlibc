@@ -58,3 +58,19 @@ struct tm *gmtime(time_t *t)
 	tp2tm(&tm, *t);
 	return &tm;
 }
+
+time_t mktime(struct tm *tm)
+{
+	static int dpm[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int d = 0, s = 0;
+	int i;
+	s = tm->tm_hour * 3600 + tm->tm_min * 60 + tm->tm_sec;
+	for (i = 70; i < tm->tm_year; i++)
+		d += 365 + isleap(1900 + i);
+	tm->tm_yday = tm->tm_mday - 1;
+	for (i = 0; i < tm->tm_mon; i++)
+		tm->tm_yday += dpm[i];
+	d += tm->tm_yday;
+	tzset();
+	return d * 24 * 3600 + s + timezone;
+}
