@@ -53,6 +53,14 @@ void *malloc(long n)
 	return m + sizeof(void *);
 }
 
+void *calloc(long n, long sz)
+{
+	void *r = malloc(n * sz);
+	if (r)
+		memset(r, 0, n * sz);
+	return r;
+}
+
 void free(void *v)
 {
 	if (!v)

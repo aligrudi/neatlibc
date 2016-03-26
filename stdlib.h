@@ -4,6 +4,7 @@
 
 void *malloc(long n);
 void free(void *m);
+void *calloc(long n, long sz);
 
 int atoi(char *s);
 long atol(char *s);
