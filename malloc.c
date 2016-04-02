@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <sys/mman.h>
 
 #define PGSIZE		4096
@@ -48,7 +49,7 @@ void *malloc(long n)
 	*(void **) m = pool;			/* the address of the owning mset */
 	pool->refs++;
 	pool->size += (n + sizeof(void *) + 7) & ~7;
-	if (!((pool + pool->size + sizeof(void *)) & PGMASK))
+	if (!((unsigned long) (pool + pool->size + sizeof(void *)) & PGMASK))
 		pool->size += sizeof(long);
 	return m + sizeof(void *);
 }
@@ -65,7 +66,7 @@ void free(void *v)
 {
 	if (!v)
 		return;
-	if (v & PGMASK) {
+	if ((unsigned long) v & PGMASK) {
 		struct mset *mset = *(void **) (v - sizeof(void *));
 		mset->refs--;
 		if (!mset->refs && mset != pool)
