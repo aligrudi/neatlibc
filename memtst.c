@@ -143,3 +143,11 @@ void memtst_free(void *v)
 		mt->freed = 1;
 	free(v);
 }
+
+void *memtst_calloc(long n, long sz)
+{
+	void *r = memtst_malloc(n * sz);
+	if (r)
+		memset(r, 0, n * sz);
+	return r;
+}

@@ -27,6 +27,8 @@ int rand(void);
 #ifdef MEMTST
 void *memtst_malloc(long n);
 void memtst_free(void *v);
+void *memtst_calloc(long n, long sz);
 #define malloc	memtst_malloc
 #define free	memtst_free
+#define calloc	memtst_calloc
 #endif
