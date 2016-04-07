@@ -1,18 +1,13 @@
-# for x86 build
-#ARCH = x86
-#CC = ncc
-#AS = fasm
+# output architecture: x64, x86, arm
+OUT = x64
 
-# for arm build
-#ARCH = arm
-#CC = ncc
-#AS = neatas
+# default assemblers
+ASx64 = fasm
+ASx86 = fasm
+ASarm = neatas
 
-# for x86_64 build
-ARCH = x64
-CC = ncc
-AS = fasm
-
+CC = /root/c/neatcc/ncc
+AS = $(AS$(OUT))
 CFLAGS = -O2 -I.
 
 all: start.o libc.a
@@ -23,10 +18,10 @@ all: start.o libc.a
 	$(CC) -c $(CFLAGS) $^
 
 OBJS1 = $(patsubst %.c,%.o,$(wildcard *.c))
-OBJS2 = $(patsubst %.s,%.o,$(wildcard $(ARCH)/*.s))
+OBJS2 = $(patsubst %.s,%.o,$(wildcard $(OUT)/*.s))
 
-start.o: $(ARCH)/start.o
-	cp $(ARCH)/start.o .
+start.o: $(OUT)/start.o
+	cp $(OUT)/start.o .
 libc.a: $(OBJS1) $(OBJS2)
 	$(AR) rcs $@ $(OBJS1) $(OBJS2)
 
