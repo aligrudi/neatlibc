@@ -59,10 +59,25 @@ memchr:
 	ldrb	r3, [r0], #1
 	cmp	r3, r1
 	bne	memchr
+	sub	r0, r0, #1
 	b	.ret
 .failed:
 	mov	r0, #0
 .ret:
+	mov	pc, lr
+
+.global memrchr
+memrchr:
+	mov	r12, #0
+.loop:
+	subs	r2, r2, #1
+	bmi	.ret
+	ldrb	r3, [r0], #1
+	cmp	r3, r1
+	subeq	r12, r0, #1
+	b	.loop
+.ret:
+	mov	r0, r12
 	mov	pc, lr
 
 .global memcmp
@@ -103,6 +118,19 @@ strchr:
 .ret:
 	mov	pc, lr
 
+.global strrchr
+strrchr:
+	mov	r3, #0
+.loop:
+	ldrb	r2, [r0], #1
+	cmp	r1, r2
+	subeq	r3, r0, #1
+	tst	r2, r2
+	bne	.loop
+.ret:
+	mov	r0, r3
+	mov	pc, lr
+
 .global strcmp
 strcmp:
 	ldrb	r2, [r0], #1
@@ -122,5 +150,21 @@ strcpy:
 	tst	r2, r2
 	bne	.loop
 	mov	r0, r3
+.ret:
+	mov	pc, lr
+
+.global strncmp
+strncmp:
+	mov	r12, r2
+.loop:
+	subs	r12, r12, #1
+	movmi	r0, #0
+	bmi	.ret
+	ldrb	r2, [r0], #1
+	ldrb	r3, [r1], #1
+	cmp	r2, #1
+	cmpcs	r2, r3
+	beq	.loop
+	sub	r0, r2, r3
 .ret:
 	mov	pc, lr
