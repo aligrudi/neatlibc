@@ -6,7 +6,7 @@ ASx64 = fasm
 ASx86 = fasm
 ASarm = neatas
 
-CC = /root/c/neatcc/ncc
+CC = ncc
 AS = $(AS$(OUT))
 CFLAGS = -O2 -I.
 
