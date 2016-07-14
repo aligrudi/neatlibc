@@ -306,3 +306,33 @@ public getcwd
 getcwd:
 	mov	eax, 183
 	jmp	__syscall
+
+public sigaction
+sigaction:
+	mov	eax, 67
+	jmp	__syscall
+
+public sigreturn
+sigreturn:
+	mov	eax, 119
+	jmp	__syscall
+
+public fsync
+fsync:
+	mov	eax, 118
+	jmp	__syscall
+
+public fdatasync
+fdatasync:
+	mov	eax, 148
+	jmp	__syscall
+
+public truncate
+truncate:
+	mov	eax, 92
+	jmp	__syscall
+
+public ftruncate
+ftruncate:
+	mov	eax, 93
+	jmp	__syscall
