@@ -24,6 +24,7 @@ int fflush(FILE *fp);
 void setbuf(FILE *fp, char *buf);
 
 int printf(char *fmt, ...);
+int vprintf(char *fmt, va_list ap);
 int fprintf(FILE *fp, char *fmt, ...);
 int sprintf(char *dst, char *fmt, ...);
 int vsprintf(char *dst, char *fmt, va_list ap);
@@ -31,6 +32,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap);
 int snprintf(char *dst, int sz, char *fmt, ...);
 int vsnprintf(char *dst, int sz, char *fmt, va_list ap);
 int fputs(char *s, FILE *fp);
+int puts(char *s);
 
 int fgetc(FILE *fp);
 char *fgets(char *s, int sz, FILE *fp);

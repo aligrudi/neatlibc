@@ -227,6 +227,11 @@ int printf(char *fmt, ...)
 	return ret;
 }
 
+int vprintf(char *fmt, va_list ap)
+{
+	vfprintf(stdout, fmt, ap);
+}
+
 int fprintf(FILE *fp, char *fmt, ...)
 {
 	va_list ap;
@@ -262,4 +267,12 @@ int fputs(char *s, FILE *fp)
 	while (*s)
 		oc(fp, (unsigned char) *s++);
 	return 0;
+}
+
+int puts(char *s)
+{
+	int ret = fputs(s, stdout);
+	if (ret >= 0)
+		oc(stdout, '\n');
+	return ret;
 }
