@@ -78,7 +78,8 @@ static int oc(FILE *fp, int c)
 		fp->ostat++;
 	}
 	if (c == '\n' || fp->olen == fp->osize)
-		fflush(fp);
+		if (fflush(fp))
+			return EOF;
 	return c;
 }
 
@@ -229,7 +230,7 @@ int printf(char *fmt, ...)
 
 int vprintf(char *fmt, va_list ap)
 {
-	vfprintf(stdout, fmt, ap);
+	return vfprintf(stdout, fmt, ap);
 }
 
 int fprintf(FILE *fp, char *fmt, ...)
@@ -275,4 +276,14 @@ int puts(char *s)
 	if (ret >= 0)
 		oc(stdout, '\n');
 	return ret;
+}
+
+long fwrite(void *v, long sz, long n, FILE *fp)
+{
+	unsigned char *s = v;
+	int i = n * sz;
+	while (i-- > 0)
+		if (oc(fp, *s++) == EOF)
+			return n * sz - i - 1;
+	return n * sz;
 }

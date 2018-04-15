@@ -43,5 +43,7 @@ int vsscanf(char *s, char *fmt, va_list ap);
 int vfscanf(FILE *fp, char *fmt, va_list ap);
 int getchar(void);
 int ungetc(int c, FILE *fp);
+long fwrite(void *s, long sz, long n, FILE *fp);
+long fread(void *s, long sz, long n, FILE *fp);
 
 void perror(char *s);

@@ -182,3 +182,13 @@ char *fgets(char *s, int sz, FILE *fp)
 	s[i] = '\0';
 	return i ? s : NULL;
 }
+
+long fread(void *v, long sz, long n, FILE *fp)
+{
+	char *s = v;
+	int i = n * sz;
+	while (i-- > 0)
+		if ((*s++ = ic(fp)) == EOF)
+			return n * sz - i - 1;
+	return n * sz;
+}
