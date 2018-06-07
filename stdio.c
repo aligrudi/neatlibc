@@ -101,9 +101,10 @@ static int digits(unsigned long n, int base)
 }
 
 static char *digs = "0123456789abcdef";
+static char *digs_uc = "0123456789ABCDEF";
 
 static void oint(FILE *fp, unsigned long n, int base, int sign,
-		int wid, int fill, int psign, int bytes)
+		int wid, int fill, int psign, int bytes, int ucase)
 {
 	char buf[64];
 	char *s = buf;
@@ -122,7 +123,7 @@ static void oint(FILE *fp, unsigned long n, int base, int sign,
 		n &= 0xffffffff;
 	d = digits(n, base);
 	for (i = 0; i < d; i++) {
-		s[d - i - 1] = digs[n % base];
+		s[d - i - 1] = ucase ? digs_uc[n % base] : digs[n % base];
 		n /= base;
 	}
 	s[d] = '\0';
@@ -169,14 +170,17 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		}
 		switch ((c = *s++)) {
 		case 'd':
-			oint(fp, va_arg(ap, long), 10, 1, wid, fill, psign, bytes);
+			oint(fp, va_arg(ap, long), 10, 1, wid, fill, psign, bytes, 0);
 			break;
 		case 'u':
-			oint(fp, va_arg(ap, long), 10, 0, wid, fill, 0, bytes);
+			oint(fp, va_arg(ap, long), 10, 0, wid, fill, 0, bytes, 0);
 			break;
 		case 'x':
 		case 'p':
-			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes);
+			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 0);
+			break;
+		case 'X':
+			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 1);
 			break;
 		case 'c':
 			oc(fp, va_arg(ap, int));
