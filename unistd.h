@@ -11,6 +11,7 @@ int unlink(char *path);
 
 extern char **environ;
 
+int isatty(int fd);
 int close(int fd);
 long write(int fd, void *buf, long n);
 long read(int fd, void *buf, long n);
