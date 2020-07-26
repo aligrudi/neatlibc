@@ -23,7 +23,7 @@ OBJS2 = $(patsubst %.s,%.o,$(wildcard $(OUT)/*.s))
 start.o: $(OUT)/start.o
 	cp $(OUT)/start.o .
 libc.a: $(OBJS1) $(OBJS2)
-	$(AR) rcs $@ $(OBJS1) $(OBJS2)
+	$(AR) rcs $@ $(OBJS1) $(filter-out $(OUT)/start.o, $(OBJS2))
 
 clean:
 	rm -f *.o *.a x86/*.o arm/*.o x64/*.o
