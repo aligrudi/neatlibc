@@ -71,7 +71,7 @@ int fflush(FILE *fp)
 	return 0;
 }
 
-static int oc(FILE *fp, int c)
+int fputc(int c, FILE *fp)
 {
 	if (fp->olen < fp->osize) {
 		fp->obuf[fp->olen++] = c;
@@ -83,13 +83,18 @@ static int oc(FILE *fp, int c)
 	return c;
 }
 
+int putchar(int c)
+{
+	return fputc(c, stdout);
+}
+
 static void ostr(FILE *fp, char *s, int wid)
 {
 	int fill = wid - strlen(s);
 	while (fill-- > 0)
-		oc(fp, ' ');
+		fputc(' ', fp);
 	while (*s)
-		oc(fp, (unsigned char) *s++);
+		fputc((unsigned char) *s++, fp);
 }
 
 static int digits(unsigned long n, int base)
@@ -128,9 +133,9 @@ static void oint(FILE *fp, unsigned long n, int base, int sign,
 	}
 	s[d] = '\0';
 	for (i = d + neg; i < wid; i++)
-		oc(fp, fill);
+		fputc(fill, fp);
 	if (neg || psign)
-		oc(fp, neg ? '-' : '+');
+		fputc(neg ? '-' : '+', fp);
 	ostr(fp, buf, 0);
 }
 
@@ -145,7 +150,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		int psign = 0;		/* add sign as in %+d */
 		int bytes = sizeof(int);
 		if (c != '%') {
-			oc(fp, c);
+			fputc(c, fp);
 			continue;
 		}
 		if (*s == '0') {
@@ -183,7 +188,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 1);
 			break;
 		case 'c':
-			oc(fp, va_arg(ap, int));
+			fputc(va_arg(ap, int), fp);
 			break;
 		case 's':
 			ostr(fp, va_arg(ap, char *), wid);
@@ -192,7 +197,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			s--;
 			break;
 		default:
-			oc(fp, c);
+			fputc(c, fp);
 		}
 	}
 	return fp->ostat - beg;
@@ -270,7 +275,7 @@ int snprintf(char *dst, int sz, char *fmt, ...)
 int fputs(char *s, FILE *fp)
 {
 	while (*s)
-		oc(fp, (unsigned char) *s++);
+		fputc((unsigned char) *s++, fp);
 	return 0;
 }
 
@@ -278,7 +283,7 @@ int puts(char *s)
 {
 	int ret = fputs(s, stdout);
 	if (ret >= 0)
-		oc(stdout, '\n');
+		fputc('\n', stdout);
 	return ret;
 }
 
@@ -287,7 +292,7 @@ long fwrite(void *v, long sz, long n, FILE *fp)
 	unsigned char *s = v;
 	int i = n * sz;
 	while (i-- > 0)
-		if (oc(fp, *s++) == EOF)
+		if (fputc(*s++, fp) == EOF)
 			return n * sz - i - 1;
 	return n * sz;
 }
