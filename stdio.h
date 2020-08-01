@@ -1,6 +1,7 @@
 #include <stdarg.h>
 
 #define EOF		(-1)
+#define putc(c, fp)	(fputc(c, fp))
 #define getc(fp)	(fgetc(fp))
 
 typedef struct {
@@ -23,6 +24,8 @@ int fclose(FILE *fp);
 int fflush(FILE *fp);
 void setbuf(FILE *fp, char *buf);
 
+int fputc(int c, FILE *fp);
+int putchar(int c);
 int printf(char *fmt, ...);
 int vprintf(char *fmt, va_list ap);
 int fprintf(FILE *fp, char *fmt, ...);
