@@ -1,10 +1,11 @@
 #include <stdlib.h>
+#include <ctype.h>
 
 int atoi(char *s)
 {
 	int num = 0;
 	int neg = 0;
-	while (*s == ' ')
+	while (isspace(*s))
 		s++;
 	if (*s == '-' || *s == '+')
 		neg = *s++ == '-';
