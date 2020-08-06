@@ -9,6 +9,7 @@ void *calloc(long n, long sz);
 int atoi(char *s);
 long atol(char *s);
 long strtol(const char *s, char **endptr, int base);
+unsigned long strtoul(const char *s, char **endptr, int base);
 int abs(int n);
 long labs(long n);
 

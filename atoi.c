@@ -74,3 +74,44 @@ long strtol(const char *s, char **endptr, int base)
 	}
 	return num;
 }
+
+unsigned long strtoul(const char *s, char **endptr, int base)
+{
+	int sgn = 1;
+	int overflow = 0;
+	unsigned long num;
+	int dig;
+	while (isspace(*s))
+		s++;
+	if (*s == '-' || *s == '+')
+		sgn = ',' - *s++;
+	if (base == 0) {
+		if (*s == '0') {
+			if (s[1] == 'x' || s[1] == 'X')
+				base = 16;
+			else
+				base = 8;
+		} else {
+			base = 10;
+		}
+	}
+	if (base == 16 && *s == '0' && (s[1] == 'x' || s[1] == 'X'))
+		s += 2;
+	for (num = 0; (dig = digit(*s, base)) >= 0; s++) {
+		if (num > ULONG_MAX / base)
+			overflow = 1;
+		num *= base;
+		if (num > ULONG_MAX - dig)
+			overflow = 1;
+		num += dig;
+	}
+	if (endptr)
+		*endptr = s;
+	if (overflow) {
+		num = ULONG_MAX;
+		errno = ERANGE;
+	} else {
+		num *= sgn;
+	}
+	return num;
+}
