@@ -98,10 +98,10 @@ unsigned long strtoul(const char *s, char **endptr, int base)
 	if (base == 16 && *s == '0' && (s[1] == 'x' || s[1] == 'X'))
 		s += 2;
 	for (num = 0; (dig = digit(*s, base)) >= 0; s++) {
-		if (num > ULONG_MAX / base)
+		if (num > (unsigned long) ULONG_MAX / base)
 			overflow = 1;
 		num *= base;
-		if (num > ULONG_MAX - dig)
+		if (num > (unsigned long) ULONG_MAX - dig)
 			overflow = 1;
 		num += dig;
 	}
