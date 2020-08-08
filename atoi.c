@@ -18,7 +18,15 @@ int atoi(char *s)
 
 long atol(char *s)
 {
-	return atoi(s);
+	long num = 0;
+	int neg = 0;
+	while (isspace(*s))
+		s++;
+	if (*s == '-' || *s == '+')
+		neg = *s++ == '-';
+	while ((unsigned) (*s - '0') <= 9u)
+		num = num * 10 + *s++ - '0';
+	return neg ? -num : num;
 }
 
 static int digit(char c, int base)
