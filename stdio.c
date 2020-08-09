@@ -208,7 +208,10 @@ void perror(char *s)
 	int idx = errno;
 	if (idx >= sys_nerr)
 		idx = 0;
-	fprintf(stderr, "%s: %s\n", s, sys_errlist[idx]);
+	if (s && *s)
+		fprintf(stderr, "%s: %s\n", s, sys_errlist[idx]);
+	else
+		fprintf(stderr, "%s\n", sys_errlist[idx]);
 }
 
 int vsnprintf(char *dst, int sz, char *fmt, va_list ap)
