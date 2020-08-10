@@ -180,6 +180,9 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		case 'u':
 			oint(fp, va_arg(ap, long), 10, 0, wid, fill, 0, bytes, 0);
 			break;
+		case 'o':
+			oint(fp, va_arg(ap, long), 8, 0, wid, fill, 0, bytes, 0);
+			break;
 		case 'x':
 		case 'p':
 			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 0);
