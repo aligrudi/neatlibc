@@ -117,7 +117,7 @@ static void oint(FILE *fp, unsigned long n, int base, int sign,
 	int d;
 	int i;
 	if (sign && (signed long) n < 0) {
-		neg = 1;
+		psign = neg = 1;
 		n = -n;
 	}
 	if (bytes == 1)
@@ -132,9 +132,9 @@ static void oint(FILE *fp, unsigned long n, int base, int sign,
 		n /= base;
 	}
 	s[d] = '\0';
-	for (i = d + neg; i < wid; i++)
+	for (i = d + psign; i < wid; i++)
 		fputc(fill, fp);
-	if (neg || psign)
+	if (psign)
 		fputc(neg ? '-' : '+', fp);
 	ostr(fp, buf, 0);
 }
