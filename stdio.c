@@ -174,7 +174,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			s++;
 		}
 		switch ((c = *s++)) {
-		case 'd':
+		case 'd': case 'i':
 			oint(fp, va_arg(ap, long), 10, 1, wid, fill, psign, bytes, 0);
 			break;
 		case 'u':
