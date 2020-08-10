@@ -157,13 +157,13 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			fill = '0';
 			s++;
 		}
-		while (isdigit(*s)) {
-			wid *= 10;
-			wid += *s++ - '0';
-		}
 		if (*s == '+') {
 			psign = 1;
 			s++;
+		}
+		while (isdigit(*s)) {
+			wid *= 10;
+			wid += *s++ - '0';
 		}
 		while (*s == 'l') {
 			bytes = sizeof(long);
