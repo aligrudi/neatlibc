@@ -13,10 +13,17 @@
 #define O_NONBLOCK	04000
 #define O_SYNC		0010000
 #define FASYNC		0020000
+#ifdef __arm__
+#define O_DIRECTORY	0040000
+#define O_NOFOLLOW	0100000
+#define O_DIRECT	0200000
+#define O_LARGEFILE	0400000
+#else
 #define O_DIRECT	0040000
 #define O_LARGEFILE	0100000
 #define O_DIRECTORY	0200000
 #define O_NOFOLLOW	0400000
+#endif
 #define O_NOATIME	001000000
 
 #define F_DUPFD		0
