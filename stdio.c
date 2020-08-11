@@ -108,17 +108,33 @@ static int digits(unsigned long n, int base)
 static char *digs = "0123456789abcdef";
 static char *digs_uc = "0123456789ABCDEF";
 
-static void oint(FILE *fp, unsigned long n, int base, int sign,
-		int wid, int fill, int psign, int bytes, int ucase)
+#define FMT_LEFT	0001	/* flag '-' */
+#define FMT_PLUS	0002	/* flag '+' */
+#define FMT_BLANK	0004	/* flag ' ' */
+#define FMT_ALT		0010	/* flag '#' */
+#define FMT_ZERO	0020	/* flag '0' */
+#define FMT_SIGNED	0040	/* is the conversion signed? */
+#define FMT_UCASE	0100	/* uppercase hex digits? */
+
+static void oint(FILE *fp, unsigned long n, int base,
+		int wid, int bytes, int flags)
 {
 	char buf[64];
 	char *s = buf;
 	int neg = 0;
+	int sign = '\0';
+	char fill;
 	int d;
 	int i;
-	if (sign && (signed long) n < 0) {
-		psign = neg = 1;
-		n = -n;
+	if (flags & FMT_SIGNED) {
+		if ((signed long) n < 0) {
+			neg = 1;
+			sign = '-';
+			n = -n;
+		} else {
+			if (flags & FMT_PLUS)
+				sign = '+';
+		}
 	}
 	if (bytes == 1)
 		n &= 0x000000ff;
@@ -128,16 +144,19 @@ static void oint(FILE *fp, unsigned long n, int base, int sign,
 		n &= 0xffffffff;
 	d = digits(n, base);
 	for (i = 0; i < d; i++) {
-		s[d - i - 1] = ucase ? digs_uc[n % base] : digs[n % base];
+		s[d - i - 1] = (flags & FMT_UCASE) ? digs_uc[n % base] : digs[n % base];
 		n /= base;
 	}
 	s[d] = '\0';
-	for (i = d + psign; i < wid; i++)
+	fill = (flags & FMT_ZERO) ? '0' : ' ';
+	for (i = d + !!sign; i < wid; i++)
 		fputc(fill, fp);
-	if (psign)
-		fputc(neg ? '-' : '+', fp);
+	if (sign)
+		fputc(sign, fp);
 	ostr(fp, buf, 0);
 }
+
+static char *fmt_flags = "-+ #0";
 
 int vfprintf(FILE *fp, char *fmt, va_list ap)
 {
@@ -145,20 +164,16 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 	int beg = fp->ostat;
 	while (*s) {
 		int c = (unsigned char) *s++;
-		int fill = ' ';
 		int wid = 0;
-		int psign = 0;		/* add sign as in %+d */
 		int bytes = sizeof(int);
+		int flags = 0;
+		char *f;
 		if (c != '%') {
 			fputc(c, fp);
 			continue;
 		}
-		if (*s == '0') {
-			fill = '0';
-			s++;
-		}
-		if (*s == '+') {
-			psign = 1;
+		while ((f = strchr(fmt_flags, *s))) {
+			flags |= 1 << (f - fmt_flags);
 			s++;
 		}
 		while (isdigit(*s)) {
@@ -175,20 +190,22 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		}
 		switch ((c = *s++)) {
 		case 'd': case 'i':
-			oint(fp, va_arg(ap, long), 10, 1, wid, fill, psign, bytes, 0);
+			flags |= FMT_SIGNED;
+			oint(fp, va_arg(ap, long), 10, wid, bytes, flags);
 			break;
 		case 'u':
-			oint(fp, va_arg(ap, long), 10, 0, wid, fill, 0, bytes, 0);
+			oint(fp, va_arg(ap, long), 10, wid, bytes, flags);
 			break;
 		case 'o':
-			oint(fp, va_arg(ap, long), 8, 0, wid, fill, 0, bytes, 0);
+			oint(fp, va_arg(ap, long), 8, wid, bytes, flags);
 			break;
 		case 'x':
 		case 'p':
-			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 0);
+			oint(fp, va_arg(ap, long), 16, wid, bytes, flags);
 			break;
 		case 'X':
-			oint(fp, va_arg(ap, long), 16, 0, wid, fill, 0, bytes, 1);
+			flags |= FMT_UCASE;
+			oint(fp, va_arg(ap, long), 16, wid, bytes, flags);
 			break;
 		case 'c':
 			fputc(va_arg(ap, int), fp);
