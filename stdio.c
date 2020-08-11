@@ -134,6 +134,8 @@ static void oint(FILE *fp, unsigned long n, int base,
 		} else {
 			if (flags & FMT_PLUS)
 				sign = '+';
+			else if (flags & FMT_BLANK)
+				sign = ' ';
 		}
 	}
 	if (bytes == 1)
