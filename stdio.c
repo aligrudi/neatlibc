@@ -151,9 +151,11 @@ static void oint(FILE *fp, unsigned long n, int base,
 	}
 	s[d] = '\0';
 	fill = (flags & FMT_ZERO) ? '0' : ' ';
+	if (fill == '0' && sign)
+		fputc(sign, fp);
 	for (i = d + !!sign; i < wid; i++)
 		fputc(fill, fp);
-	if (sign)
+	if (fill == ' ' && sign)
 		fputc(sign, fp);
 	ostr(fp, buf, 0);
 }
