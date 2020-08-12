@@ -124,6 +124,7 @@ static void oint(FILE *fp, unsigned long n, int base,
 	int neg = 0;
 	int sign = '\0';
 	char fill;
+	int ucase;
 	int d;
 	int i;
 	if (flags & FMT_SIGNED) {
@@ -145,8 +146,9 @@ static void oint(FILE *fp, unsigned long n, int base,
 	if (bytes == 4)
 		n &= 0xffffffff;
 	d = digits(n, base);
+	ucase = flags & FMT_UCASE;
 	for (i = 0; i < d; i++) {
-		s[d - i - 1] = (flags & FMT_UCASE) ? digs_uc[n % base] : digs[n % base];
+		s[d - i - 1] = ucase ? digs_uc[n % base] : digs[n % base];
 		n /= base;
 	}
 	s[d] = '\0';
