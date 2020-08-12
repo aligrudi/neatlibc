@@ -124,7 +124,10 @@ static void oint(FILE *fp, unsigned long n, int base,
 	int neg = 0;
 	int sign = '\0';
 	char fill;
-	int ucase;
+	int left = flags & FMT_LEFT;
+	int alt_form = flags & FMT_ALT;
+	int ucase = flags & FMT_UCASE;
+	int prefix_len = 0; /* length of sign or base prefix */
 	int d;
 	int i;
 	if (flags & FMT_SIGNED) {
@@ -138,6 +141,9 @@ static void oint(FILE *fp, unsigned long n, int base,
 			else if (flags & FMT_BLANK)
 				sign = ' ';
 		}
+		prefix_len = !!sign;
+	} else if (n > 0 && alt_form) {
+		prefix_len = base == 16 ? 2 : 1;
 	}
 	if (bytes == 1)
 		n &= 0x000000ff;
@@ -146,20 +152,30 @@ static void oint(FILE *fp, unsigned long n, int base,
 	if (bytes == 4)
 		n &= 0xffffffff;
 	d = digits(n, base);
-	ucase = flags & FMT_UCASE;
 	for (i = 0; i < d; i++) {
 		s[d - i - 1] = ucase ? digs_uc[n % base] : digs[n % base];
 		n /= base;
 	}
 	s[d] = '\0';
 	fill = (flags & FMT_ZERO) ? '0' : ' ';
-	if (fill == '0' && sign)
+	i = d + prefix_len;
+	if (fill == ' ' && !left)
+		while (i++ < wid)
+			fputc(' ', fp);
+	if (sign) {
 		fputc(sign, fp);
-	for (i = d + !!sign; i < wid; i++)
-		fputc(fill, fp);
-	if (fill == ' ' && sign)
-		fputc(sign, fp);
+	} else if (prefix_len) {
+		fputc('0', fp);
+		if (base == 16)
+			fputc(ucase ? 'X' : 'x', fp);
+	}
+	if (fill == '0' && !left)
+		while (i++ < wid)
+			fputc('0', fp);
 	ostr(fp, buf, 0);
+	if (left)
+		while (i++ < wid)
+			fputc(' ', fp);
 }
 
 static char *fmt_flags = "-+ #0";
