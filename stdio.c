@@ -248,6 +248,9 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		case 's':
 			ostr(fp, va_arg(ap, char *), wid, flags & FMT_LEFT);
 			break;
+		case 'n':
+			*va_arg(ap, int *) = fp->ostat - beg;
+			break;
 		case '\0':
 			s--;
 			break;
