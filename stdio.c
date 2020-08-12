@@ -202,9 +202,18 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			flags |= 1 << (f - fmt_flags);
 			s++;
 		}
-		while (isdigit(*s)) {
-			wid *= 10;
-			wid += *s++ - '0';
+		if (*s == '*') {
+			wid = va_arg(ap, int);
+			if (wid < 0) {
+				flags |= FMT_LEFT;
+				wid = -wid;
+			}
+			s++;
+		} else {
+			while (isdigit(*s)) {
+				wid *= 10;
+				wid += *s++ - '0';
+			}
 		}
 		while (*s == 'l') {
 			bytes = sizeof(long);
