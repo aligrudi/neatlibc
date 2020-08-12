@@ -88,13 +88,17 @@ int putchar(int c)
 	return fputc(c, stdout);
 }
 
-static void ostr(FILE *fp, char *s, int wid)
+static void ostr(FILE *fp, char *s, int wid, int left)
 {
 	int fill = wid - strlen(s);
-	while (fill-- > 0)
-		fputc(' ', fp);
+	if (!left)
+		while (fill-- > 0)
+			fputc(' ', fp);
 	while (*s)
 		fputc((unsigned char) *s++, fp);
+	if (left)
+		while (fill-- > 0)
+			fputc(' ', fp);
 }
 
 static int digits(unsigned long n, int base)
@@ -172,7 +176,7 @@ static void oint(FILE *fp, unsigned long n, int base,
 	if (fill == '0' && !left)
 		while (i++ < wid)
 			fputc('0', fp);
-	ostr(fp, buf, 0);
+	ostr(fp, buf, 0, 0);
 	if (left)
 		while (i++ < wid)
 			fputc(' ', fp);
@@ -233,7 +237,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			fputc(va_arg(ap, int), fp);
 			break;
 		case 's':
-			ostr(fp, va_arg(ap, char *), wid);
+			ostr(fp, va_arg(ap, char *), wid, flags & FMT_LEFT);
 			break;
 		case '\0':
 			s--;
