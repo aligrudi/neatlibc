@@ -193,6 +193,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 		int wid = 0;
 		int bytes = sizeof(int);
 		int flags = 0;
+		int left;
 		char *f;
 		if (c != '%') {
 			fputc(c, fp);
@@ -202,6 +203,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			flags |= 1 << (f - fmt_flags);
 			s++;
 		}
+		left = flags & FMT_LEFT;
 		if (*s == '*') {
 			wid = va_arg(ap, int);
 			if (wid < 0) {
@@ -243,10 +245,15 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			oint(fp, va_arg(ap, long), 16, wid, bytes, flags);
 			break;
 		case 'c':
-			fputc(va_arg(ap, int), fp);
+			if (left)
+				fputc(va_arg(ap, int), fp);
+			while (wid-- > 1)
+				fputc(' ', fp);
+			if (!left)
+				fputc(va_arg(ap, int), fp);
 			break;
 		case 's':
-			ostr(fp, va_arg(ap, char *), wid, flags & FMT_LEFT);
+			ostr(fp, va_arg(ap, char *), wid, left);
 			break;
 		case 'n':
 			*va_arg(ap, int *) = fp->ostat - beg;
