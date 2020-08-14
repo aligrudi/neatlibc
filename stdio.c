@@ -231,6 +231,7 @@ int vfprintf(FILE *fp, char *fmt, va_list ap)
 			oint(fp, va_arg(ap, long), 10, wid, bytes, flags);
 			break;
 		case 'u':
+			flags &= ~FMT_ALT;
 			oint(fp, va_arg(ap, long), 10, wid, bytes, flags);
 			break;
 		case 'o':
