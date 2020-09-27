@@ -1,6 +1,7 @@
-format ELF64
 
-public setjmp
+
+
+global setjmp
 setjmp:
 	mov	[rdi + 0 * 8], rbx
 	mov	[rdi + 1 * 8], rbp
@@ -15,7 +16,7 @@ setjmp:
 	xor	rax, rax
 	ret
 
-public longjmp
+global longjmp
 longjmp:
 	mov	rbx, [rdi + 0 * 8]
 	mov	rbp, [rdi + 1 * 8]

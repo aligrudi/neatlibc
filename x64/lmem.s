@@ -1,6 +1,7 @@
-format ELF64
 
-public __memcpylong
+
+
+global __memcpylong
 __memcpylong:
 	mov	rax, rdi
 	mov	rcx, rdx
@@ -9,7 +10,7 @@ __memcpylong:
 	rep movsq
 	ret
 
-public __memsetlong
+global __memsetlong
 __memsetlong:
 	mov	rcx, rdx
 	mov	rax, rsi

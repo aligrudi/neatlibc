@@ -2,7 +2,7 @@
 OUT = x64
 
 # default assemblers
-ASx64 = fasm
+ASx64 = nasm -f elf64
 ASx86 = fasm
 ASarm = neatas
 

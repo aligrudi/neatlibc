@@ -1,7 +1,8 @@
-format ELF64
 
-public htonl
-public ntohl
+
+
+global htonl
+global ntohl
 htonl:
 ntohl:
 	mov	eax, edi
@@ -10,8 +11,8 @@ ntohl:
 	xchg	al, ah
 	ret
 
-public htons
-public ntohs
+global htons
+global ntohs
 htons:
 ntohs:
 	mov	eax, edi

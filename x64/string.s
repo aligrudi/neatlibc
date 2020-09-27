@@ -1,6 +1,7 @@
-format ELF64
 
-public memcpy
+
+
+global memcpy
 memcpy:
 	mov	rax, rdi
 	mov	rcx, rdx
@@ -8,7 +9,7 @@ memcpy:
 	rep movsb
 	ret
 
-public memmove
+global memmove
 memmove:
 	mov	rcx, rdx
 	cmp	rdi, rsi
@@ -32,7 +33,7 @@ memmove:
 	rep movsb
 	ret
 
-public memset
+global memset
 memset:
 	mov	rcx, rdx
 	mov	rax, rsi
@@ -42,7 +43,7 @@ memset:
 	mov	rax, rdx
 	ret
 
-public memchr
+global memchr
 memchr:
 	mov	rax, rsi
 	mov	rcx, rdx
@@ -58,7 +59,7 @@ memchr:
 	xor	eax, eax
 	ret
 
-public memcmp
+global memcmp
 memcmp:
 	xor	eax, eax
 	mov	rcx, rdx
@@ -75,7 +76,7 @@ memcmp:
 .ret:
 	ret
 
-public strlen
+global strlen
 strlen:
 	xor	eax, eax
 	mov	rcx, -1
@@ -86,7 +87,7 @@ strlen:
 	dec	rax
 	ret
 
-public memrchr
+global memrchr
 memrchr:
 	mov	eax, esi
 	mov	rcx, rdx
@@ -104,7 +105,7 @@ memrchr:
 	xor	eax, eax
 	ret
 
-public strchr
+global strchr
 strchr:
 .loop:
 	mov	al, [rdi]
@@ -118,7 +119,7 @@ strchr:
 	mov	rax, rdi
 	ret
 
-public strcmp
+global strcmp
 strcmp:
 	xor	eax, eax
 .loop:
@@ -135,7 +136,7 @@ strcmp:
 	sub	rax, rcx
 	ret
 
-public strcpy
+global strcpy
 strcpy:
 	mov	rdx, rdi
 	cld
@@ -147,7 +148,7 @@ strcpy:
 	mov	rax, rdx
 	ret
 
-public strrchr
+global strrchr
 strrchr:
 	xor	edx, edx
 	dec	rdi
@@ -164,7 +165,7 @@ strrchr:
 	mov	rax, rdx
 	ret
 
-public strncmp
+global strncmp
 strncmp:
 	xor	eax, eax
 .loop:

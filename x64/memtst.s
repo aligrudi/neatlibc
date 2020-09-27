@@ -1,6 +1,7 @@
-format ELF64
 
-public memtst_back
+
+
+global memtst_back
 memtst_back:
 	mov	rax, rbp
 bt_up:	cmp	rdi, 0
