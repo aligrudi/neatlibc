@@ -1,6 +1,7 @@
-format ELF
 
-public memtst_back
+
+
+global memtst_back
 memtst_back:
 	mov	eax, ebp
 	mov	ecx, [esp+4]

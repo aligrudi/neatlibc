@@ -1,6 +1,7 @@
-format ELF
 
-public __memcpylong
+
+
+global __memcpylong
 __memcpylong:
 	push	esi
 	push	edi
@@ -15,7 +16,7 @@ __memcpylong:
 	pop	esi
 	ret
 
-public __memsetlong
+global __memsetlong
 __memsetlong:
 	push	edi
 	mov	edi, [esp+8]
