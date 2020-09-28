@@ -1,6 +1,7 @@
-format ELF
 
-public setjmp
+
+
+global setjmp
 setjmp:
 	mov	eax, [esp + 4]
 	mov	[eax + 0 * 4], ebx
@@ -14,7 +15,7 @@ setjmp:
 	xor	eax, eax
 	ret
 
-public longjmp
+global longjmp
 longjmp:
 	mov	edx, [esp + 4]
 	mov	eax, [esp + 8]

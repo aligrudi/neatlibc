@@ -1,4 +1,6 @@
-format ELF
+
+global errno
+errno	dd	0
 
 __syscall:
 	push	ebp
@@ -29,310 +31,309 @@ done:
 	pop	ebp
 	ret
 
-errno	dd	0
-public errno
-
-public _exit
+global _exit
 _exit:
 	mov	eax, 1
 	jmp	__syscall
 
-public fork
+global fork
 fork:
 	mov	eax, 2
 	jmp	__syscall
 
-public read
+global read
 read:
 	mov	eax, 3
 	jmp	__syscall
 
-public write
+global write
 write:
 	mov	eax, 4
 	jmp	__syscall
 
-public open
+global open
 open:
 	mov	eax, 5
 	jmp	__syscall
 
-public close
+global close
 close:
 	mov	eax, 6
 	jmp	__syscall
 
-public waitpid
+global waitpid
 waitpid:
 	mov	eax, 7
 	jmp	__syscall
 
-public creat
+global creat
 creat:
 	mov	eax, 8
 	jmp	__syscall
 
-public link
+global link
 link:
 	mov	eax, 9
 	jmp	__syscall
 
-public unlink
+global unlink
 unlink:
 	mov	eax, 10
 	jmp	__syscall
 
-public execve
+global execve
 execve:
 	mov	eax, 11
 	jmp	__syscall
 
-public chdir
+global chdir
 chdir:
 	mov	eax, 12
 	jmp	__syscall
 
-public time
+global time
 time:
 	mov	eax, 13
 	jmp	__syscall
 
-public mknod
+global mknod
 mknod:
 	mov	eax, 14
 	jmp	__syscall
 
-public chmod
+global chmod
 chmod:
 	mov	eax, 15
 	jmp	__syscall
 
-public lseek
+global lseek
 lseek:
 	mov	eax, 19
 	jmp	__syscall
 
-public getpid
+global getpid
 getpid:
 	mov	eax, 20
 	jmp	__syscall
 
-public mount
+global mount
 mount:
 	mov	eax, 21
 	jmp	__syscall
 
-public umount
+global umount
 umount:
 	mov	eax, 22
 	jmp	__syscall
 
-public setuid
+global setuid
 setuid:
 	mov	eax, 23
 	jmp	__syscall
 
-public getuid
+global getuid
 getuid:
 	mov	eax, 24
 	jmp	__syscall
 
-public utime
+global utime
 utime:
 	mov	eax, 30
 	jmp	__syscall
 
-public access
+global access
 access:
 	mov	eax, 33
 	jmp	__syscall
 
-public sync
+global sync
 sync:
 	mov	eax, 36
 	jmp	__syscall
 
-public kill
+global kill
 kill:
 	mov	eax, 37
 	jmp	__syscall
 
-public mkdir
+global mkdir
 mkdir:
 	mov	eax, 39
 	jmp	__syscall
 
-public rmdir
+global rmdir
 rmdir:
 	mov	eax, 40
 	jmp	__syscall
 
-public __dup as 'dup'
+global __dup
+global dup
+dup:
 __dup:
 	mov	eax, 41
 	jmp	__syscall
 
-public pipe
+global pipe
 pipe:
 	mov	eax, 42
 	jmp	__syscall
 
-public brk
+global brk
 brk:
 	mov	eax, 45
 	jmp	__syscall
 
-public setgid
+global setgid
 setgid:
 	mov	eax, 46
 	jmp	__syscall
 
-public getgid
+global getgid
 getgid:
 	mov	eax, 47
 	jmp	__syscall
 
-public signal
+global signal
 signal:
 	mov	eax, 48
 	jmp	__syscall
 
-public geteuid
+global geteuid
 geteuid:
 	mov	eax, 49
 	jmp	__syscall
 
-public getegid
+global getegid
 getegid:
 	mov	eax, 50
 	jmp	__syscall
 
-public ioctl
+global ioctl
 ioctl:
 	mov	eax, 54
 	jmp	__syscall
 
-public fcntl
+global fcntl
 fcntl:
 	mov	eax, 55
 	jmp	__syscall
 
-public dup2
+global dup2
 dup2:
 	mov	eax, 63
 	jmp	__syscall
 
-public getppid
+global getppid
 getppid:
 	mov	eax, 64
 	jmp	__syscall
 
-public setsid
+global setsid
 setsid:
 	mov	eax, 66
 	jmp	__syscall
 
-public gettimeofday
+global gettimeofday
 gettimeofday:
 	mov	eax, 78
 	jmp	__syscall
 
-public settimeofday
+global settimeofday
 settimeofday:
 	mov	eax, 79
 	jmp	__syscall
 
-public mmap
+global mmap
 mmap:
 	mov	eax, 192
 	jmp	__syscall
 
-public munmap
+global munmap
 munmap:
 	mov	eax, 91
 	jmp	__syscall
 
-public stat
+global stat
 stat:
 	mov	eax, 106
 	jmp	__syscall
 
-public lstat
+global lstat
 lstat:
 	mov	eax, 107
 	jmp	__syscall
 
-public fstat
+global fstat
 fstat:
 	mov	eax, 108
 	jmp	__syscall
 
-public clone
+global clone
 clone:
 	mov	eax, 120
 	jmp	__syscall
 
-public uname
+global uname
 uname:
 	mov	eax, 122
 	jmp	__syscall
 
-public fchdir
+global fchdir
 fchdir:
 	mov	eax, 133
 	jmp	__syscall
 
-public getdents
+global getdents
 getdents:
 	mov	eax, 141
 	jmp	__syscall
 
-public nanosleep
+global nanosleep
 nanosleep:
 	mov	eax, 162
 	jmp	__syscall
 
-public poll
+global poll
 poll:
 	mov	eax, 168
 	jmp	__syscall
 
-public chown
+global chown
 chown:
 	mov	eax, 182
 	jmp	__syscall
 
-public getcwd
+global getcwd
 getcwd:
 	mov	eax, 183
 	jmp	__syscall
 
-public sigaction
+global sigaction
 sigaction:
 	mov	eax, 67
 	jmp	__syscall
 
-public sigreturn
+global sigreturn
 sigreturn:
 	mov	eax, 119
 	jmp	__syscall
 
-public fsync
+global fsync
 fsync:
 	mov	eax, 118
 	jmp	__syscall
 
-public fdatasync
+global fdatasync
 fdatasync:
 	mov	eax, 148
 	jmp	__syscall
 
-public truncate
+global truncate
 truncate:
 	mov	eax, 92
 	jmp	__syscall
 
-public ftruncate
+global ftruncate
 ftruncate:
 	mov	eax, 93
 	jmp	__syscall

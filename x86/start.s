@@ -1,10 +1,11 @@
-format ELF
 
-extrn environ
 
-extrn main
-extrn __neatlibc_exit
-public _start
+
+extern environ
+
+extern main
+extern __neatlibc_exit
+global _start
 _start:
 	xor	ebp, ebp
 	pop	ecx

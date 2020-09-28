@@ -1,6 +1,7 @@
-format ELF
 
-public memcpy
+
+
+global memcpy
 memcpy:
 	push	esi
 	push	edi
@@ -14,7 +15,7 @@ memcpy:
 	pop	esi
 	ret
 
-public memmove
+global memmove
 memmove:
 	push	esi
 	push	edi
@@ -45,7 +46,7 @@ memmove:
 	pop	esi
 	ret
 
-public memset
+global memset
 memset:
 	push	edi
 	mov	edi, [esp+8]
@@ -58,7 +59,7 @@ memset:
 	mov	eax, edx
 	ret
 
-public memchr
+global memchr
 memchr:
 	mov	eax, [esp+8]
 	mov	ecx, [esp+12]
@@ -78,7 +79,7 @@ memchr:
 	pop	edi
 	ret
 
-public memcmp
+global memcmp
 memcmp:
 	push	esi
 	push	edi
@@ -98,7 +99,7 @@ memcmp:
 	pop 	esi
 	ret
 
-public strlen
+global strlen
 strlen:
 	push	edi
 	mov	edi, [esp+8]
@@ -112,7 +113,7 @@ strlen:
 	pop	edi
 	ret
 
-public memrchr
+global memrchr
 memrchr:
 	mov	eax, [esp+8]
 	mov	ecx, [esp+12]
@@ -134,7 +135,7 @@ memrchr:
 	pop	edi
 	ret
 
-public strchr
+global strchr
 strchr:
 	mov	ecx, [esp+4]
 	mov	edx, [esp+8]
@@ -150,7 +151,7 @@ strchr:
 	mov	eax, ecx
 	ret
 
-public strcmp
+global strcmp
 strcmp:
 	mov	ecx, [esp+4]
 	mov	edx, [esp+8]
@@ -169,7 +170,7 @@ strcmp:
 	sub	eax, ecx
 	ret
 
-public strcpy
+global strcpy
 strcpy:
 	push	edi
 	push	esi
@@ -187,7 +188,7 @@ strcpy:
 	mov	eax, edx
 	ret
 
-public strrchr
+global strrchr
 strrchr:
 	push	edi
 	mov	edi, [esp+8]
@@ -208,7 +209,7 @@ strrchr:
 	pop	edi
 	ret
 
-public strncmp
+global strncmp
 strncmp:
 	mov	ecx, [esp+4]
 	mov	edx, [esp+8]
