@@ -41,8 +41,8 @@ struct ratom {
 
 /* regular expression instruction */
 struct rinst {
-	int ri;			/* instruction type (RI_*) */
 	struct ratom ra;	/* regular expression atom (RI_ATOM) */
+	int ri;			/* instruction type (RI_*) */
 	int a1, a2;		/* destination of RI_FORK and RI_JUMP */
 	int mark;		/* mark (RI_MARK) */
 };
@@ -56,21 +56,21 @@ struct regex {
 
 /* regular expression matching state */
 struct rstate {
-	int mark[NGRPS * 2];	/* marks for RI_MARK */
-	int pc;			/* program counter */
 	char *s;		/* the current position in the string */
 	char *o;		/* the beginning of the string */
+	int mark[NGRPS * 2];	/* marks for RI_MARK */
+	int pc;			/* program counter */
 	int flg;		/* flags passed to regcomp() and regexec() */
 	int dep;		/* re_rec() depth */
 };
 
 /* regular expression tree; used for parsing */
 struct rnode {
-	int rn;			/* node type (RN_*) */
 	struct ratom ra;	/* regular expression atom (RN_ATOM) */
+	struct rnode *c1, *c2;	/* children */
 	int mincnt, maxcnt;	/* number of repetitions */
 	int grp;		/* group number */
-	struct rnode *c1, *c2;	/* children */
+	int rn;			/* node type (RN_*) */
 };
 
 static struct rnode *rnode_make(int rn, struct rnode *c1, struct rnode *c2)
