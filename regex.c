@@ -307,13 +307,15 @@ static struct rnode *rnode_parse(char **pat);
 
 static struct rnode *rnode_grp(char **pat)
 {
-	struct rnode *rnode;
+	struct rnode *rnode = NULL;
 	if ((*pat)[0] != '(')
 		return NULL;
 	*pat += 1;
-	rnode = rnode_parse(pat);
-	if (!rnode)
-		return NULL;
+	if ((*pat)[0] != ')') {
+		rnode = rnode_parse(pat);
+		if (!rnode)
+			return NULL;
+	}
 	if ((*pat)[0] != ')') {
 		rnode_free(rnode);
 		return NULL;
