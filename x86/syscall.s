@@ -193,11 +193,6 @@ getgid:
 	mov	eax, 47
 	jmp	__syscall
 
-global signal
-signal:
-	mov	eax, 48
-	jmp	__syscall
-
 global geteuid
 geteuid:
 	mov	eax, 49

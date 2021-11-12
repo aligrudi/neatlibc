@@ -172,11 +172,6 @@ getgid:
 	mov	r12, #47
 	b	__syscall
 
-.global signal
-signal:
-	mov	r12, #48
-	b	__syscall
-
 .global geteuid
 geteuid:
 	mov	r12, #49
@@ -212,6 +207,11 @@ setsid:
 	mov	r12, #66
 	b	__syscall
 
+.global sigaction
+sigaction:
+	mov	r12, #67
+	b	__syscall
+
 .global gettimeofday
 gettimeofday:
 	mov	r12, #78
@@ -245,6 +245,11 @@ lstat:
 .global fstat
 fstat:
 	mov	r12, #108
+	b	__syscall
+
+.global sigreturn
+sigreturn:
+	mov	r12, #119
 	b	__syscall
 
 .global clone
