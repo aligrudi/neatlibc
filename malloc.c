@@ -7,9 +7,16 @@
 #define MSETMAX		4096
 #define MSETLEN		(1 << 15)
 
+/* placed at the beginning of regions for small allocations */
 struct mset {
-	int refs;
-	int size;
+	int refs;		/* number of allocations */
+	int size;		/* remaining size */
+};
+
+/* placed before each small allocation */
+struct mhdr {
+	struct mset *mset;	/* containing mset */
+	long size;		/* allocation size */
 };
 
 static struct mset *pool;
@@ -42,16 +49,32 @@ void *malloc(long n)
 		*(long *) m = n + PGSIZE;	/* store length in the first page */
 		return m + PGSIZE;
 	}
-	if (!pool || MSETLEN - pool->size < n + sizeof(void *))
+	if (!pool || n + sizeof(struct mhdr) > MSETLEN - pool->size)
 		if (mk_pool())
 			return NULL;
 	m = (void *) pool + pool->size;
-	*(void **) m = pool;			/* the address of the owning mset */
+	((struct mhdr *) m)->mset = pool;
+	((struct mhdr *) m)->size = n;
 	pool->refs++;
-	pool->size += (n + sizeof(void *) + 7) & ~7;
-	if (!((unsigned long) (pool + pool->size + sizeof(void *)) & PGMASK))
+	pool->size += (n + sizeof(struct mhdr) + 7) & ~7;
+	if (!((unsigned long) (pool + pool->size + sizeof(struct mhdr)) & PGMASK))
 		pool->size += sizeof(long);
-	return m + sizeof(void *);
+	return m + sizeof(struct mhdr);
+}
+
+void free(void *v)
+{
+	if (!v)
+		return;
+	if ((unsigned long) v & PGMASK) {
+		struct mhdr *mhdr = v - sizeof(struct mhdr);
+		struct mset *mset = mhdr->mset;
+		mset->refs--;
+		if (!mset->refs && mset != pool)
+			munmap(mset, mset->size);
+	} else {
+		munmap(v - PGSIZE, *(long *) (v - PGSIZE));
+	}
 }
 
 void *calloc(long n, long sz)
@@ -62,16 +85,13 @@ void *calloc(long n, long sz)
 	return r;
 }
 
-void free(void *v)
+void *realloc(void *v, long sz)
 {
-	if (!v)
-		return;
-	if ((unsigned long) v & PGMASK) {
-		struct mset *mset = *(void **) (v - sizeof(void *));
-		mset->refs--;
-		if (!mset->refs && mset != pool)
-			munmap(mset, mset->size);
-	} else {
-		munmap(v - PGSIZE, *(long *) (v - PGSIZE));
+	void *r = malloc(sz);
+	if (r) {
+		struct mhdr *m = v - sizeof(*m);
+		memcpy(r, v, m->size);
+		free(v);
 	}
+	return r;
 }

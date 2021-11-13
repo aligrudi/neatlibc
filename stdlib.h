@@ -5,6 +5,7 @@
 void *malloc(long n);
 void free(void *m);
 void *calloc(long n, long sz);
+void *realloc(void *v, long sz);
 
 int atoi(char *s);
 long atol(char *s);
@@ -30,7 +31,9 @@ int rand(void);
 void *memtst_malloc(long n);
 void memtst_free(void *v);
 void *memtst_calloc(long n, long sz);
+void *memtst_realloc(void *v, long sz);
 #define malloc	memtst_malloc
 #define free	memtst_free
 #define calloc	memtst_calloc
+#define realloc	memtst_realloc
 #endif

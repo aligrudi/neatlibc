@@ -151,3 +151,14 @@ void *memtst_calloc(long n, long sz)
 		memset(r, 0, n * sz);
 	return r;
 }
+
+void *memtst_realloc(void *v, long sz)
+{
+	void *r = memtst_malloc(sz);
+	if (r) {
+		long sz = *(long *) (v - sizeof(long));
+		memcpy(r, v, sz);
+		memtst_free(v);
+	}
+	return r;
+}
