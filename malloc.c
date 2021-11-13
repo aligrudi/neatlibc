@@ -9,14 +9,14 @@
 
 /* placed at the beginning of regions for small allocations */
 struct mset {
-	int refs;		/* number of allocations */
-	int size;		/* remaining size */
+	int refs;	/* number of allocations */
+	int size;	/* remaining size */
 };
 
 /* placed before each small allocation */
 struct mhdr {
-	struct mset *mset;	/* containing mset */
-	long size;		/* allocation size */
+	int moff;	/* mset offset */
+	int size;	/* allocation size */
 };
 
 static struct mset *pool;
@@ -53,7 +53,7 @@ void *malloc(long n)
 		if (mk_pool())
 			return NULL;
 	m = (void *) pool + pool->size;
-	((struct mhdr *) m)->mset = pool;
+	((struct mhdr *) m)->moff = pool->size;
 	((struct mhdr *) m)->size = n;
 	pool->refs++;
 	pool->size += (n + sizeof(struct mhdr) + 7) & ~7;
@@ -68,7 +68,7 @@ void free(void *v)
 		return;
 	if ((unsigned long) v & PGMASK) {
 		struct mhdr *mhdr = v - sizeof(struct mhdr);
-		struct mset *mset = mhdr->mset;
+		struct mset *mset = (void *) mhdr - mhdr->moff;
 		mset->refs--;
 		if (!mset->refs && mset != pool)
 			munmap(mset, mset->size);
