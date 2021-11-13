@@ -85,12 +85,18 @@ void *calloc(long n, long sz)
 	return r;
 }
 
+static long msize(void *v)
+{
+	if ((unsigned long) v & PGMASK)
+		return ((struct mhdr *) (v - sizeof(*v)))->size;
+	return *(long *) (v - PGSIZE);
+}
+
 void *realloc(void *v, long sz)
 {
 	void *r = malloc(sz);
-	if (r) {
-		struct mhdr *m = v - sizeof(*m);
-		memcpy(r, v, m->size);
+	if (r && v) {
+		memcpy(r, v, msize(v));
 		free(v);
 	}
 	return r;
