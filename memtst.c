@@ -105,11 +105,8 @@ static void memtst_bt(long *bt)
 	bt[4] = memtst_back(5);
 }
 
-void *memtst_malloc(long n)
+static void memtst_mcheck(void *v, long n, long *bt)
 {
-	void *v = malloc(n);
-	long bt[MTBTLEN];
-	memtst_bt(bt);
 	if (!v)
 		fprintf(stderr, "memtstfail %8ld %s\n", n, memtst_show(bt));
 	else
@@ -121,19 +118,23 @@ void *memtst_malloc(long n)
 	}
 	if (memtst_mcur > memtst_mmax)
 		memtst_mmax = memtst_mcur;
+}
+
+void *memtst_malloc(long n)
+{
+	void *v = malloc(n);
+	long bt[MTBTLEN];
+	memtst_bt(bt);
+	memtst_mcheck(v, n, bt);
 	return v;
 }
 
-void memtst_free(void *v)
+static void memtst_fcheck(void *v, long *bt)
 {
 	struct memtst *mt;
-	if (!v)
-		return;
 	memtst_fcnt++;
 	mt = memtst_get(v);
 	if (!mt && !memtst_full()) {
-		long bt[MTBTLEN];
-		memtst_bt(bt);
 		fprintf(stderr, "memtstfree %8p %s\n", v, memtst_show(bt));
 		return;
 	}
@@ -141,24 +142,34 @@ void memtst_free(void *v)
 		memtst_mcur -= mt->n;
 	if (mt)
 		mt->freed = 1;
-	free(v);
+}
+
+void memtst_free(void *v)
+{
+	long bt[MTBTLEN];
+	if (v)  {
+		memtst_bt(bt);
+		memtst_fcheck(v, bt);
+		free(v);
+	}
 }
 
 void *memtst_calloc(long n, long sz)
 {
-	void *r = memtst_malloc(n * sz);
-	if (r)
-		memset(r, 0, n * sz);
+	void *r = calloc(n, sz);
+	long bt[MTBTLEN];
+	memtst_bt(bt);
+	memtst_mcheck(r, n * sz, bt);
 	return r;
 }
 
 void *memtst_realloc(void *v, long sz)
 {
-	void *r = memtst_malloc(sz);
-	if (r) {
-		long sz = *(long *) (v - sizeof(long));
-		memcpy(r, v, sz);
-		memtst_free(v);
-	}
+	void *r = realloc(v, sz);
+	long bt[MTBTLEN];
+	memtst_bt(bt);
+	memtst_mcheck(r, sz, bt);
+	if (v)
+		memtst_fcheck(v, bt);
 	return r;
 }
