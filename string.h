@@ -19,3 +19,8 @@ int strncmp(char *d, char *s, long n);
 char *strstr(char *s, char *r);
 
 char *strdup(const char *s);
+
+/* faster implementations */
+#define memchr(s, c, n)		__memchr_c(s, c, n)
+
+void *__memchr_c(void *s, int c, long n);

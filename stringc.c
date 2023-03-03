@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 
 char *strncpy(char *d, char *s, long n)
@@ -27,4 +28,13 @@ char *strstr(char *s, char *r)
 		s = strchr(s + 1, *r);
 	}
 	return NULL;
+}
+
+char *strdup(const char *s)
+{
+	size_t n = strlen(s) + 1;
+	char *res = malloc(n);
+	if (res)
+		memcpy(res, s, n);
+	return res;
 }
