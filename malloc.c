@@ -49,7 +49,7 @@ void *malloc(long n)
 		*(long *) m = n + PGSIZE;	/* store length in the first page */
 		return m + PGSIZE;
 	}
-	if (!pool || n + sizeof(struct mhdr) > MSETLEN - pool->size)
+	if (!pool || pool->size + n + sizeof(struct mhdr) > MSETLEN)
 		if (mk_pool())
 			return NULL;
 	m = (void *) pool + pool->size;
@@ -71,7 +71,7 @@ void free(void *v)
 		struct mset *mset = (void *) mhdr - mhdr->moff;
 		mset->refs--;
 		if (!mset->refs && mset != pool)
-			munmap(mset, mset->size);
+			munmap(mset, MSETLEN);
 	} else {
 		munmap(v - PGSIZE, *(long *) (v - PGSIZE));
 	}
