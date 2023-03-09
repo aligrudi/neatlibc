@@ -13,9 +13,7 @@ __syscall:
 	strcs	r2, [r3]
 	ldmfd	sp!, {r4, r5, r7, pc}
 
-.global errno
-errno:
-	.word	0
+.extern errno
 
 .global _exit
 _exit:

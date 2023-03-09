@@ -1,6 +1,5 @@
 
-global errno
-errno	dq	0
+extern errno
 
 __syscall:
 	mov	r10, rcx
@@ -11,7 +10,7 @@ __syscall:
 	cmp	rax, -4095
 	jb	done
 	neg	rax
-	mov	[errno], rax
+	mov	[errno], eax
 	mov	rax, -1
 done:
 	ret

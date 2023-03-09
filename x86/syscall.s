@@ -1,6 +1,5 @@
 
-global errno
-errno	dd	0
+extern errno
 
 __syscall:
 	push	ebp
