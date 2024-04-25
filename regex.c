@@ -163,6 +163,7 @@ static void ratom_readbrk(struct ratom *ra, char **pat)
 
 static void ratom_read(struct ratom *ra, char **pat)
 {
+	char *s;
 	int len;
 	switch ((unsigned char) **pat) {
 	case '.':
@@ -189,8 +190,15 @@ static void ratom_read(struct ratom *ra, char **pat)
 		(*pat)++;
 	default:
 		ra->ra = RA_CHR;
-		len = uc_len(*pat);
-		ra->s = malloc(8);
+		s = *pat;
+		while ((s == *pat) || !strchr(".^$[(|)*?+{\\", (unsigned char) s[0])) {
+			int l = uc_len(s);
+			if (s != *pat && s[l] != '\0' && strchr("*?+{", (unsigned char) s[l]))
+				break;
+			s += uc_len(s);
+		}
+		len = s - *pat;
+		ra->s = malloc(len + 1);
 		memcpy(ra->s, *pat, len);
 		ra->s[len] = '\0';
 		*pat += len;
@@ -265,35 +273,53 @@ static int brk_match(char *brk, int c, int flg)
 
 static int ratom_match(struct ratom *ra, struct rstate *rs)
 {
-	if (ra->ra == RA_CHR) {
-		int c1 = uc_dec(ra->s);
-		int c2 = uc_dec(rs->s);
-		if (rs->flg & REG_ICASE && c1 < 128 && isupper(c1))
-			c1 = tolower(c1);
-		if (rs->flg & REG_ICASE && c2 < 128 && isupper(c2))
-			c2 = tolower(c2);
-		if (c1 != c2)
+	if (ra->ra == RA_CHR && !(rs->flg & REG_ICASE)) {
+		char *s = ra->s;
+		char *r = rs->s;
+		while (*s && *s == *r)
+			s++, r++;
+		if (*s)
 			return 1;
-		rs->s += uc_len(ra->s);
+		rs->s = r;
+		return 0;
+	}
+	if (ra->ra == RA_CHR) {
+		int pos = 0;
+		while (ra->s[pos]) {
+			int c1 = uc_dec(ra->s + pos);
+			int c2 = uc_dec(rs->s + pos);
+			if (rs->flg & REG_ICASE && c1 < 128 && isupper(c1))
+				c1 = tolower(c1);
+			if (rs->flg & REG_ICASE && c2 < 128 && isupper(c2))
+				c2 = tolower(c2);
+			if (c1 != c2)
+				return 1;
+			pos += uc_len(ra->s + pos);
+		}
+		rs->s += pos;
 		return 0;
 	}
 	if (ra->ra == RA_ANY) {
-		if (!rs->s[0])
+		if (!rs->s[0] || (rs->s[0] == '\n' && !!(rs->flg & REG_NEWLINE)))
 			return 1;
 		rs->s += uc_len(rs->s);
 		return 0;
 	}
 	if (ra->ra == RA_BRK) {
 		int c = uc_dec(rs->s);
-		if (!c)
+		if (!c || (c == '\n' && !!(rs->flg & REG_NEWLINE) && ra->s[1] == '^'))
 			return 1;
 		rs->s += uc_len(rs->s);
 		return brk_match(ra->s + 1, c, rs->flg);
 	}
-	if (ra->ra == RA_BEG && !(rs->flg & REG_NOTBOL))
-		return rs->s != rs->o;
-	if (ra->ra == RA_END && !(rs->flg & REG_NOTEOL))
-		return rs->s[0] != '\0';
+	if (ra->ra == RA_BEG && rs->s == rs->o)
+		return !!(rs->flg & REG_NOTBOL);
+	if (ra->ra == RA_BEG && rs->s > rs->o && rs->s[-1] == '\n')
+		return !(rs->flg & REG_NEWLINE);
+	if (ra->ra == RA_END && rs->s[0] == '\0')
+		return !!(rs->flg & REG_NOTEOL);
+	if (ra->ra == RA_END && rs->s[0] == '\n')
+		return !(rs->flg & REG_NEWLINE);
 	if (ra->ra == RA_WBEG)
 		return !((rs->s == rs->o || !isword(uc_beg(rs->o, rs->s - 1))) &&
 			isword(rs->s));
@@ -547,8 +573,9 @@ void regfree(regex_t *preg)
 static int re_rec(struct regex *re, struct rstate *rs)
 {
 	struct rinst *ri = NULL;
-	if (++(rs->dep) >= NDEPT)
+	if (rs->dep >= NDEPT)
 		return 1;
+	rs->dep++;
 	while (1) {
 		ri = &re->p[rs->pc];
 		if (ri->ri == RI_ATOM) {
@@ -578,6 +605,7 @@ static int re_rec(struct regex *re, struct rstate *rs)
 		}
 		break;
 	}
+	rs->dep--;
 	return ri->ri != RI_MATCH;
 }
 
@@ -585,9 +613,9 @@ static int re_recmatch(struct regex *re, struct rstate *rs, int nsub, regmatch_t
 {
 	int i;
 	rs->pc = 0;
-	for (i = 0; i < LEN(rs->mark); i++)
-		rs->mark[i] = -1;
 	rs->dep = 0;
+	for (i = 0; i < LEN(rs->mark) && i < nsub * 2; i++)
+		rs->mark[i] = -1;
 	if (!re_rec(re, rs)) {
 		for (i = 0; i < nsub; i++) {
 			psub[i].rm_so = i * 2 < LEN(rs->mark) ? rs->mark[i * 2] : -1;
