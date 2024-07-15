@@ -336,7 +336,7 @@ static struct rnode *rnode_grp(char **pat)
 	struct rnode *rnode = NULL;
 	if ((*pat)[0] != '(')
 		return NULL;
-	*pat += 1;
+	++*pat;
 	if ((*pat)[0] != ')') {
 		rnode = rnode_parse(pat);
 		if (!rnode)
@@ -346,7 +346,7 @@ static struct rnode *rnode_grp(char **pat)
 		rnode_free(rnode);
 		return NULL;
 	}
-	*pat += 1;
+	++*pat;
 	return rnode_make(RN_GRP, rnode, NULL);
 }
 
@@ -368,17 +368,17 @@ static struct rnode *rnode_atom(char **pat)
 	if ((*pat)[0] == '*' || (*pat)[0] == '?') {
 		rnode->mincnt = 0;
 		rnode->maxcnt = (*pat)[0] == '*' ? -1 : 1;
-		*pat += 1;
+		++*pat;
 	}
 	if ((*pat)[0] == '+') {
 		rnode->mincnt = 1;
 		rnode->maxcnt = -1;
-		*pat += 1;
+		++*pat;
 	}
 	if ((*pat)[0] == '{') {
 		rnode->mincnt = 0;
 		rnode->maxcnt = 0;
-		*pat += 1;
+		++*pat;
 		while (isdigit((unsigned char) **pat))
 			rnode->mincnt = rnode->mincnt * 10 + *(*pat)++ - '0';
 		if (**pat == ',') {
@@ -390,7 +390,7 @@ static struct rnode *rnode_atom(char **pat)
 		} else {
 			rnode->maxcnt = rnode->mincnt;
 		}
-		*pat += 1;
+		++*pat;
 		if (rnode->mincnt > NREPS || rnode->maxcnt > NREPS) {
 			rnode_free(rnode);
 			return NULL;
@@ -415,7 +415,7 @@ static struct rnode *rnode_parse(char **pat)
 	struct rnode *c2;
 	if ((*pat)[0] != '|')
 		return c1;
-	*pat += 1;
+	++*pat;
 	c2 = rnode_parse(pat);
 	return c2 ? rnode_make(RN_ALT, c1, c2) : c1;
 }
@@ -630,11 +630,12 @@ int regexec(regex_t *preg, char *s, int nsub, regmatch_t psub[], int flg)
 {
 	struct regex *re = *preg;
 	struct rstate rs;
+	char *o = s;
 	memset(&rs, 0, sizeof(rs));
 	rs.flg = re->flg | flg;
 	rs.o = s;
-	while (*s) {
-		rs.s = s;
+	while (*o) {
+		rs.s = o = s;
 		s += uc_len(s);
 		if (!re_recmatch(re, &rs, flg & REG_NOSUB ? 0 : nsub, psub))
 			return 0;
