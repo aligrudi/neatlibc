@@ -20,10 +20,15 @@ struct mhdr {
 };
 
 static struct mset *pool;
+static struct mset *pool1;	/* a freed pool */
 
 static int mk_pool(void)
 {
-	if (pool && !pool->refs) {
+	if ((pool == NULL || pool->refs > 0) && pool1 != NULL) {
+		pool = pool1;
+		pool1 = NULL;
+	}
+	if (pool != NULL && pool->refs == 0) {
 		pool->size = sizeof(*pool);
 		return 0;
 	}
@@ -70,8 +75,12 @@ void free(void *v)
 		struct mhdr *mhdr = v - sizeof(struct mhdr);
 		struct mset *mset = (void *) mhdr - mhdr->moff;
 		mset->refs--;
-		if (!mset->refs && mset != pool)
-			munmap(mset, MSETLEN);
+		if (mset->refs == 0 && mset != pool) {
+			if (pool1 != NULL)
+				munmap(mset, MSETLEN);
+			else
+				pool1 = mset;
+		}
 	} else {
 		munmap(v - PGSIZE, *(long *) (v - PGSIZE));
 	}
