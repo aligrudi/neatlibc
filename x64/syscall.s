@@ -264,6 +264,11 @@ fchdir:
 	mov	eax, 81
 	jmp	__syscall
 
+global rename
+rename:
+	mov	eax, 82
+	jmp	__syscall
+
 global getdents
 getdents:
 	mov	eax, 78

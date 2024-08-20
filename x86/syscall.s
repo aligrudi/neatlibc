@@ -155,6 +155,11 @@ kill:
 	mov	eax, 37
 	jmp	__syscall
 
+global rename
+rename:
+	mov	eax, 38
+	jmp	__syscall
+
 global mkdir
 mkdir:
 	mov	eax, 39

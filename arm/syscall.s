@@ -135,6 +135,11 @@ kill:
 	mov	r12, #37
 	b	__syscall
 
+.global rename
+rename:
+	mov	r12, #38
+	b	__syscall
+
 .global mkdir
 mkdir:
 	mov	r12, #39
