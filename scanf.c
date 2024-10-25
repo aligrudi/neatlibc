@@ -43,8 +43,15 @@ int ungetc(int c, FILE *fp)
 	return fp->back;
 }
 
+static int idig(int c, int hex)
+{
+	static char *digs = "0123456789abcdef";
+	char *r = memchr(digs, hex ? tolower(c) : c, hex ? 16 : 10);
+	return r == NULL ? -1 : r - digs;
+}
+
 /* t is 1 for char, 2 for short, 4 for int, and 8 for long */
-static int iint(FILE *fp, void *dst, int t, int wid)
+static int iint(FILE *fp, void *dst, int t, int hex, int wid)
 {
 	long n = 0;
 	int c;
@@ -54,13 +61,13 @@ static int iint(FILE *fp, void *dst, int t, int wid)
 		neg = 1;
 	if ((c == '-' || c == '+') && wid-- > 0)
 		c = ic(fp);
-	if (!isdigit(c) || wid <= 0) {
+	if (c == EOF || idig(c, hex) < 0 || wid <= 0) {
 		ungetc(c, fp);
 		return 1;
 	}
 	do {
-		n = n * 10 + c - '0';
-	} while (isdigit(c = ic(fp)) && --wid > 0);
+		n = n * (hex ? 16 : 10) + idig(c, hex);
+	} while ((c = ic(fp)) != EOF && idig(c, hex) >= 0 && --wid > 0);
 	ungetc(c, fp);
 	if (t == 8)
 		*(long *) dst = neg ? -n : n;
@@ -118,7 +125,12 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 		switch (*fmt++) {
 		case 'u':
 		case 'd':
-			if (iint(fp, va_arg(ap, long *), t, wid))
+			if (iint(fp, va_arg(ap, long *), t, 0, wid))
+				return ret;
+			ret++;
+			break;
+		case 'x':
+			if (iint(fp, va_arg(ap, long *), t, 1, wid))
 				return ret;
 			ret++;
 			break;
