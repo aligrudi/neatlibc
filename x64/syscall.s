@@ -323,3 +323,63 @@ global ftruncate
 ftruncate:
 	mov	eax, 77
 	jmp	__syscall
+
+global socket
+socket:
+	mov	eax, 41
+	jmp	__syscall
+
+global connect
+connect:
+	mov	eax, 42
+	jmp	__syscall
+
+global accept
+accept:
+	mov	eax, 43
+	jmp	__syscall
+
+global sendto
+sendto:
+	mov	eax, 44
+	jmp	__syscall
+
+global recvfrom
+recvfrom:
+	mov	eax, 45
+	jmp	__syscall
+
+global shutdown
+shutdown:
+	mov	eax, 48
+	jmp	__syscall
+
+global bind
+bind:
+	mov	eax, 49
+	jmp	__syscall
+
+global listen
+listen:
+	mov	eax, 50
+	jmp	__syscall
+
+global getsockname
+getsockname:
+	mov	eax, 51
+	jmp	__syscall
+
+global getpeername
+getpeername:
+	mov	eax, 52
+	jmp	__syscall
+
+global getsockopt
+getsockopt:
+	mov	eax, 54
+	jmp	__syscall
+
+global setsockopt
+setsockopt:
+	mov	eax, 55
+	jmp	__syscall
