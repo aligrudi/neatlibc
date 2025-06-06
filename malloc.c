@@ -51,7 +51,7 @@ void *malloc(long n)
 				MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (m == MAP_FAILED)
 			return NULL;
-		*(long *) m = n + PGSIZE;	/* store length in the first page */
+		*(long *) m = n;	/* store length in the first page */
 		return m + PGSIZE;
 	}
 	if (!pool || pool->size + n + sizeof(struct mhdr) > MSETLEN)
