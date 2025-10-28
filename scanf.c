@@ -108,6 +108,11 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 		if (*fmt != '%')
 			continue;
 		fmt++;
+		if (*fmt == '%') {
+			if (*fmt++ != ic(fp))
+				return ret;
+			continue;
+		}
 		if (isdigit((unsigned char) *fmt)) {
 			wid = 0;
 			while (isdigit((unsigned char) *fmt))
