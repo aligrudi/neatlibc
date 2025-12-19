@@ -17,6 +17,7 @@ char *strncpy(char *d, char *s, long n);
 char *strcat(char *d, char *s);
 int strncmp(char *d, char *s, long n);
 char *strstr(char *s, char *r);
+char *strpbrk(char *s, char *r);
 
 char *strdup(const char *s);
 

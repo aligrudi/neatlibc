@@ -38,3 +38,13 @@ char *strdup(const char *s)
 		memcpy(res, s, n);
 	return res;
 }
+
+char *strpbrk(char *s, char *r)
+{
+	while (*s) {
+		if (strchr(r, (unsigned char) *s))
+			return s;
+		s++;
+	}
+	return NULL;
+}
