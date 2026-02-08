@@ -91,6 +91,12 @@ static int istr(FILE *fp, char *dst, int wid)
 	return d == dst;
 }
 
+static int ichr(FILE *fp, char *dst)
+{
+	*dst = ic(fp);
+	return *dst == EOF;
+}
+
 int vfscanf(FILE *fp, char *fmt, va_list ap)
 {
 	int ret = 0;
@@ -136,6 +142,11 @@ int vfscanf(FILE *fp, char *fmt, va_list ap)
 			break;
 		case 'x':
 			if (iint(fp, va_arg(ap, long *), t, 1, wid))
+				return ret;
+			ret++;
+			break;
+		case 'c':
+			if (ichr(fp, va_arg(ap, char *)))
 				return ret;
 			ret++;
 			break;
