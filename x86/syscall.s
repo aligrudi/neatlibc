@@ -222,6 +222,11 @@ dup2:
 	mov	eax, 63
 	jmp	__syscall
 
+global alarm
+alarm:
+	mov	eax, 27
+	jmp	__syscall
+
 global getppid
 getppid:
 	mov	eax, 64

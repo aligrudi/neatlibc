@@ -39,6 +39,7 @@ int execv(char *path, char *argv[]);
 void _exit(int status);
 
 int sleep(int n);
+unsigned alarm(unsigned seconds);
 
 /* standard file descriptors */
 #define STDIN_FILENO	0
