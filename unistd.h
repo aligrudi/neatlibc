@@ -30,6 +30,12 @@ int dup2(int fd, int fd2);
 int fork(void);
 int getpid(void);
 int getppid(void);
+int getuid(void);
+int getgid(void);
+int getpgid(void);
+int setuid(int);
+int setgid(int);
+int setpgid(int pid, int pgid);
 
 int execve(char *path, char *argv[], char *envp[]);
 int execle(char *path, ...);

@@ -217,6 +217,11 @@ fcntl:
 	mov	eax, 55
 	jmp	__syscall
 
+global setpgid
+setpgid:
+	mov	eax, 57
+	jmp	__syscall
+
 global dup2
 dup2:
 	mov	eax, 63
@@ -280,6 +285,11 @@ clone:
 global uname
 uname:
 	mov	eax, 122
+	jmp	__syscall
+
+global getpgid
+getpgid:
+	mov	eax, 132
 	jmp	__syscall
 
 global fchdir

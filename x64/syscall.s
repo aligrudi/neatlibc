@@ -189,6 +189,16 @@ getegid:
 	mov	eax, 108
 	jmp	__syscall
 
+global setpgid
+setpgid:
+	mov	eax, 109
+	jmp	__syscall
+
+global getpgid
+getpgid:
+	mov	eax, 121
+	jmp	__syscall
+
 global ioctl
 ioctl:
 	mov	eax, 16
